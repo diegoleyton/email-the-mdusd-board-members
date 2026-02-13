@@ -21,17 +21,14 @@
 
 body{
   margin:0;
-  padding:0;
-  font-family: system-ui, sans-serif;
-  background:#ffffff;
+  font-family:system-ui,sans-serif;
+  background:#fff;
   color:var(--text);
 }
 
-/* Layout */
 .page{
-  width:100%;
   max-width:920px;
-  margin:0 auto;
+  margin:auto;
   padding:18px;
 }
 
@@ -40,16 +37,14 @@ body{
   padding:18px;
   border-radius:16px;
   border:1px solid var(--border);
-  width:100%;
 }
 
-/* Title */
 .titleBlock{
   display:flex;
   flex-direction:column;
   align-items:center;
   gap:12px;
-  margin:0 0 12px 0;
+  margin-bottom:12px;
   text-align:center;
 }
 
@@ -57,16 +52,13 @@ body{
   width:120px;
   height:120px;
   object-fit:contain;
-  border-radius:14px;
 }
 
 .title{
   font-size:22px;
   margin:0;
-  line-height:1.2;
 }
 
-/* Subtitle */
 .subtitle{
   color:var(--muted);
   font-size:14px;
@@ -74,12 +66,6 @@ body{
   line-height:1.5;
 }
 
-.subtitle .es{
-  color:#64748b;
-  font-weight:500;
-}
-
-/* Card */
 .card{
   background:#fff;
   border:1px solid var(--border);
@@ -87,14 +73,12 @@ body{
   padding:16px;
 }
 
-/* Labels */
 label{
   font-size:13px;
   color:var(--muted);
 }
 
-/* ---------- INPUT (improved differentiation) ---------- */
-input[type=text]{
+input{
   width:100%;
   padding:12px;
   margin-top:6px;
@@ -102,22 +86,20 @@ input[type=text]{
   border:1px solid #c7d7ff;
   background:#f9fbff;
   font-size:16px;
-  outline:none;
   cursor:text;
-  transition:.15s;
+  outline:none;
 }
 
-input[type=text]::placeholder{
+input::placeholder{
   color:#94a3b8;
+  opacity:1;
 }
 
-input[type=text]:focus{
+input:focus{
   border-color:#93c5fd;
-  background:#ffffff;
-  box-shadow:0 0 0 3px rgba(37,99,235,0.14);
+  box-shadow:0 0 0 3px rgba(37,99,235,.14);
 }
 
-/* Warning */
 .nameWarning{
   display:none;
   margin-top:8px;
@@ -128,20 +110,17 @@ input[type=text]:focus{
   color:#7f1d1d;
   font-size:13px;
 }
-.nameWarning.show{ display:block; }
+.nameWarning.show{display:block;}
 
 .needsName{
   border-color:#fca5a5 !important;
-  box-shadow:0 0 0 3px rgba(239,68,68,0.12) !important;
 }
 
-/* Gmail toggle */
 .gmailToggle{
   margin-top:14px;
   font-size:14px;
 }
 
-/* Buttons grid */
 .grid{
   display:grid;
   grid-template-columns:1fr;
@@ -150,37 +129,27 @@ input[type=text]:focus{
 }
 
 @media(min-width:640px){
-  .grid{ grid-template-columns:1fr 1fr; }
+  .grid{grid-template-columns:1fr 1fr;}
 }
 
-/* Member buttons */
 button.member{
   padding:14px;
   border-radius:14px;
   border:1px solid var(--border);
   background:#fff;
   cursor:pointer;
-  text-align:left;
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  width:100%;
+  justify-content:space-between;
   font-size:16px;
   transition:.15s;
 }
 
-button.member:hover{
-  background:#f8fbff;
-  border-color:#bfdbfe;
-}
-
-button.member:active{
-  transform:translateY(1px);
-}
+button.member:hover{ background:#f8fbff; }
 
 button.member:disabled{
+  opacity:.55;
   cursor:not-allowed;
-  opacity:0.55;
 }
 
 .name{
@@ -190,32 +159,23 @@ button.member:disabled{
   gap:8px;
 }
 
-/* checkmark next to name */
 .inlineCheck{
   color:#16a34a;
   font-weight:900;
   display:none;
 }
-.inlineCheck.show{ display:inline; }
+.inlineCheck.show{display:inline;}
 
-/* Progress */
 .progress{
   margin-top:14px;
   font-size:13px;
   color:var(--muted);
 }
 
-/* Tooltip note */
 .note{
   margin-top:6px;
   font-size:12px;
   color:var(--muted);
-  line-height:1.5;
-}
-
-.note .es{
-  color:#64748b;
-  font-weight:500;
 }
 
 .greenCheck{
@@ -223,7 +183,6 @@ button.member:disabled{
   font-weight:700;
 }
 
-/* Reset button */
 .resetWrap{
   margin-top:10px;
 }
@@ -239,17 +198,7 @@ button.member:disabled{
   cursor:pointer;
 }
 
-.resetBtn:hover{ filter:brightness(.98); }
-.resetBtn:active{ transform:translateY(1px); }
-
-/* Mobile */
-@media(max-width:520px){
-  .page{ padding:14px; }
-  .wrap{ padding:14px; }
-  .card{ padding:14px; }
-  .titleLogo{ width:104px; height:104px; }
-  .title{ font-size:22px; }
-}
+.resetBtn:hover{filter:brightness(.97);}
 </style>
 </head>
 
@@ -258,31 +207,29 @@ button.member:disabled{
 <div class="wrap">
 
 <div class="titleBlock">
-<img class="titleLogo"
-src="https://lh3.googleusercontent.com/sitesv/APaQ0SRSoGSsWCwj8hWWCNYbVKNnxchIFpi0l2CuetL7BzJNbhDu1tLHbY-ZysRJlFYSVOE4qK0QLujlAjGnw5cSzGGbBtvsnpzfbZkOMTe-EVq50pIO0Qo4V6QwkW65Xm4hzHdO9pizguz8-rSJRDZ3pbsgxKjJy5pn7OOA21w6JFLQH88CkGUX1c0B1nN2MdghbmxAC-khWpAbNIHwkcK2Tg6W4gQTro2kLP9GIQ4=w1280">
+<img class="titleLogo" src="logo.png">
 <h2 class="title">Email the MDUSD Board Members</h2>
 </div>
 
 <div class="subtitle">
-<b>English:</b> Enter your name, then click each person to open a prepared email and send it.<br>
-<span class="es"><b>Español:</b> Escriba su nombre y luego haga clic en cada persona para abrir un correo listo y enviarlo.</span>
+<b>English:</b> Enter your name, then click a name to open a prepared email. Review and send.<br>
+<span style="opacity:.7"><b>Español:</b> Escriba su nombre y luego toque un nombre para abrir un correo listo. Revíselo y envíelo.</span>
 </div>
 
 <div class="card">
 
-<label>Your Name / <span class="es">Su Nombre</span></label>
-<input id="senderName">
+<label>Your Name / Su Nombre</label>
+<input id="senderName" placeholder="Your name">
 
 <div class="nameWarning" id="nameWarning">
-<b>English:</b> Please enter your name to enable buttons.<br>
-<span class="es"><b>Español:</b> Escriba su nombre para habilitar los botones.</span>
+<b>English:</b> Please enter your name.<br>
+<span style="opacity:.7"><b>Español:</b> Por favor escriba su nombre.</span>
 </div>
 
 <div class="gmailToggle" id="gmailToggle">
 <label>
 <input type="checkbox" id="gmailCheck">
 Use Gmail website instead of your email app
-<span class="es">/ Usar Gmail web en vez de su app de correo</span>
 </label>
 </div>
 
@@ -291,13 +238,11 @@ Use Gmail website instead of your email app
 <div class="progress" id="progressText">Opened: 0 / 9</div>
 
 <div class="note">
-<span class="greenCheck">✓</span> <b>English:</b> Check means email opened — make sure you sent it.<br>
-<span class="es"><span class="greenCheck">✓</span> <b>Español:</b> La marca indica que abrió el correo — asegúrese de enviarlo.</span>
+<span class="greenCheck">✓</span> <b>English:</b> Checks mean you opened the email — make sure you sent it.<br>
+<span style="opacity:.7"><b>Español:</b> Las marcas indican que abrió el correo — asegúrese de enviarlo.</span>
 
 <div class="resetWrap">
-<button class="resetBtn" id="resetBtn">
-Reset checkmarks<br><span class="es">Reiniciar marcas</span>
-</button>
+<button class="resetBtn" id="resetBtn">Reset checkmarks / Reiniciar marcas</button>
 </div>
 </div>
 
@@ -310,14 +255,16 @@ const SUBJECT="Concern Regarding Two-Way Dual Immersion Transition";
 
 const BASE=`I am writing as a Bancroft Elementary community member to share my concern about the recently announced transition of the Two-Way Dual Immersion program.
 
-Like many families, we learned of this decision on January 28—just weeks before Kindergarten enrollment opens.
+Like many families, we learned of this decision on January 28—just weeks before Kindergarten enrollment opens. This change has created significant uncertainty for our family and others as we try to plan for enrollment, childcare, and keeping siblings together.
 
-I respectfully ask MDUSD to consider:
+I respectfully ask MDUSD to consider two specific actions:
 
-1. Delay the transition.
+1. Delay the transition so families have adequate time to plan.
 2. Engage in real dialogue with the community.
 
-Thank you for your time.`;
+Families are asking for transparency, time, and collaboration before a decision of this magnitude is implemented.
+
+Thank you for your time and service.`;
 
 const MEMBERS=[
 ["Debra Mason","masond@mdusd.org"],
@@ -334,43 +281,64 @@ const MEMBERS=[
 const storeKey="progressEmails_v2";
 const nameKey="senderName_v1";
 
-/* mobile hide toggle */
-if(/Android|iPhone|iPad/i.test(navigator.userAgent)){
-document.getElementById("gmailToggle").style.display="none";
+/* ---------- storage ---------- */
+
+function progress(){
+return JSON.parse(localStorage.getItem(storeKey)||"{}");
+}
+function save(p){
+localStorage.setItem(storeKey,JSON.stringify(p));
 }
 
-function progress(){ return JSON.parse(localStorage.getItem(storeKey)||"{}"); }
-function save(p){ localStorage.setItem(storeKey,JSON.stringify(p)); }
+/* ---------- name save ---------- */
+
+function loadSavedName(){
+const saved=(localStorage.getItem(nameKey)||"").trim();
+if(saved) document.getElementById("senderName").value=saved;
+}
+function saveNameNow(){
+localStorage.setItem(nameKey,getSenderName());
+}
+
+/* ---------- UI update ---------- */
 
 function update(){
 const p=progress();
 document.getElementById("progressText").textContent=`Opened: ${Object.keys(p).length} / ${MEMBERS.length}`;
+
 MEMBERS.forEach(m=>{
 const check=document.querySelector(`[data-check="${m[1]}"]`);
-if(check) check.classList.toggle("show",p[m[1]]);
+if(check){
+if(p[m[1]]) check.classList.add("show");
+else check.classList.remove("show");
+}
 });
 }
 
-function getName(){ return senderName.value.trim(); }
+/* ---------- name gate ---------- */
 
-function showWarn(){
-nameWarning.classList.add("show");
-senderName.classList.add("needsName");
-senderName.focus();
+function getSenderName(){
+return(document.getElementById("senderName").value||"").trim();
 }
 
-function refresh(){
-const ok=getName().length>0;
-document.querySelectorAll(".member").forEach(b=>b.disabled=!ok);
-if(ok){
-nameWarning.classList.remove("show");
-senderName.classList.remove("needsName");
+function refreshNameGate(){
+const ok=getSenderName().length>0;
+document.querySelectorAll("button.member").forEach(b=>b.disabled=!ok);
+
+if(!ok){
+document.getElementById("nameWarning").classList.add("show");
+document.getElementById("senderName").classList.add("needsName");
+}else{
+document.getElementById("nameWarning").classList.remove("show");
+document.getElementById("senderName").classList.remove("needsName");
 }
 }
+
+/* ---------- email ---------- */
 
 function openEmail(email,name){
-const sender=getName();
-if(!sender){ showWarn(); return; }
+const sender=getSenderName();
+if(!sender){refreshNameGate();return;}
 
 const body=`Dear ${name},
 
@@ -380,43 +348,55 @@ Sincerely,
 
 ${sender}`;
 
-const link=gmailCheck.checked
+const gmail=document.getElementById("gmailCheck").checked;
+
+const link=gmail
 ?`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(body)}`
 :`mailto:${email}?subject=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(body)}`;
 
-const p=progress(); p[email]=true; save(p); update();
-gmailCheck.checked?window.open(link):location.href=link;
+const p=progress();
+p[email]=true;
+save(p);
+update();
+
+if(gmail) window.open(link,"_blank");
+else window.location.href=link;
 }
 
-function render(){
+/* ---------- reset ---------- */
 
-/* restore saved name */
-const saved=localStorage.getItem(nameKey);
-if(saved) senderName.value=saved;
+document.addEventListener("click",e=>{
+if(e.target.id==="resetBtn"){
+if(confirm("Reset checkmarks? / ¿Reiniciar marcas?")){
+localStorage.removeItem(storeKey);
+update();
+}
+}
+});
+
+/* ---------- render ---------- */
+
+function render(){
+loadSavedName();
+
+const c=document.getElementById("buttons");
 
 MEMBERS.forEach(m=>{
 const b=document.createElement("button");
 b.className="member";
-b.innerHTML=`<span class=name>${m[0]} <span class=inlineCheck data-check="${m[1]}">✓</span></span>`;
+b.innerHTML=`
+<span class="name">${m[0]}<span class="inlineCheck" data-check="${m[1]}">✓</span></span>
+`;
 b.onclick=()=>openEmail(m[1],m[0]);
-buttons.appendChild(b);
+c.appendChild(b);
 });
 
 update();
-refresh();
+refreshNameGate();
 
-senderName.oninput=()=>{
-localStorage.setItem(nameKey,senderName.value);
-refresh();
-};
+const input=document.getElementById("senderName");
+input.addEventListener("input",()=>{saveNameNow();refreshNameGate();});
 }
-
-resetBtn.onclick=()=>{
-if(confirm("Reset checkmarks?\n\n¿Reiniciar marcas?")){
-localStorage.removeItem(storeKey);
-update();
-}
-};
 
 render();
 </script>
