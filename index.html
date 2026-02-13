@@ -1,490 +1,381 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Email the MDUSD Board Members</title>
-  <link rel="icon" type="image/png" href="logo.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email the MDUSD Board Members</title>
+<link rel="icon" type="image/png" href="logo.png">
 
-  <style>
-    :root{
-      --bg:#f3f7ff;
-      --card:#ffffff;
-      --text:#0f172a;
-      --muted:#475569;
-      --border:#dbeafe;
-      --blue:#1d4ed8;
-      --blueSoft:#eff6ff;
-    }
+<style>
+:root{
+  --bg:#f3f7ff;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbeafe;
+  --blue:#1d4ed8;
+}
 
-    *{ box-sizing:border-box; }
+*{ box-sizing:border-box; }
 
-    body{
-      margin:0;
-      padding:0;
-      font-family: system-ui, sans-serif;
-      background: #ffffff;
-      color: var(--text);
-    }
+body{
+  margin:0;
+  font-family:system-ui,sans-serif;
+  background:#fff;
+  color:var(--text);
+}
 
-    /* Centered page layout (desktop) but full width on mobile */
-    .page{
-      width:100%;
-      max-width: 920px;
-      margin: 0 auto;
-      padding: 18px;
-    }
+.page{
+  width:100%;
+  max-width:920px;
+  margin:0 auto;
+  padding:18px;
+}
 
-    .wrap{
-      background: var(--bg);
-      padding:18px;
-      border-radius:16px;
-      border:1px solid var(--border);
-      width:100%;
-    }
+.wrap{
+  background:var(--bg);
+  padding:18px;
+  border-radius:16px;
+  border:1px solid var(--border);
+}
 
-    .titleBlock{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:12px;
-      margin:0 0 12px 0;
-      text-align:center;
-    }
+.titleBlock{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  margin-bottom:12px;
+  text-align:center;
+}
 
-    .titleLogo{
-      width:120px;
-      height:120px;
-      object-fit:contain;
-      border-radius:14px;
-    }
+.titleLogo{
+  width:120px;
+  height:120px;
+  object-fit:contain;
+  border-radius:14px;
+}
 
-    .title{
-      font-size:22px;
-      margin:0;
-      color: var(--text);
-      line-height:1.2;
-    }
+.title{
+  font-size:22px;
+  margin:0;
+}
 
-    .subtitle{
-      color:var(--muted);
-      font-size:14px;
-      margin-bottom:16px;
-      line-height:1.5;
-    }
+.subtitle{
+  color:var(--muted);
+  font-size:14px;
+  margin-bottom:16px;
+  line-height:1.5;
+}
 
-    .es{
-      opacity:0.72;   /* softer Spanish */
-      font-weight:500;
-    }
+.es{
+  opacity:.7;
+  font-weight:500;
+}
 
-    .card{
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:16px;
-    }
+.card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+}
 
-    label{
-      font-size:13px;
-      color:var(--muted);
-    }
+label{
+  font-size:13px;
+  color:var(--muted);
+}
 
-    input[type=text]{
-      width:100%;
-      padding:12px;
-      margin-top:6px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      font-size:16px; /* ✅ 16 prevents iOS zoom-on-focus */
-      outline:none;
-    }
-    input[type=text]:focus{
-      border-color:#93c5fd;
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.14);
-    }
+input{
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  font-size:16px;
+}
 
-    .nameWarning{
-      display:none;
-      margin-top:8px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid #fecaca;
-      background:#fff1f2;
-      color:#7f1d1d;
-      font-size:13px;
-      line-height:1.35;
-    }
-    .nameWarning.show{ display:block; }
+input:focus{
+  border-color:#93c5fd;
+  box-shadow:0 0 0 3px rgba(37,99,235,.15);
+}
 
-    .needsName{
-      border-color:#fca5a5 !important;
-      box-shadow: 0 0 0 3px rgba(239,68,68,0.12) !important;
-    }
+.nameWarning{
+  display:none;
+  margin-top:8px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid #fecaca;
+  background:#fff1f2;
+  color:#7f1d1d;
+  font-size:13px;
+}
+.nameWarning.show{ display:block; }
 
-    .gmailToggle{
-      margin-top:14px;
-      font-size:14px;
-      color:var(--text);
-    }
+.needsName{
+  border-color:#fca5a5 !important;
+  box-shadow:0 0 0 3px rgba(239,68,68,.12) !important;
+}
 
-    .grid{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:10px;
-      margin-top:16px;
-    }
+.gmailToggle{
+  margin-top:14px;
+  font-size:14px;
+}
 
-    @media (min-width:640px){
-      .grid{ grid-template-columns:1fr 1fr; }
-    }
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin-top:16px;
+}
 
-    /* ✅ The whole name row is the button */
-    button.member{
-      padding:14px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background:#fff;
-      cursor:pointer;
-      text-align:left;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      width:100%;
-      font-size:16px;
-      transition: background 120ms ease, transform 80ms ease, box-shadow 120ms ease;
-    }
+@media(min-width:640px){
+  .grid{ grid-template-columns:1fr 1fr; }
+}
 
-    button.member:hover{
-      background:#f8fbff;
-    }
+/* BUTTON ROW */
+button.member{
+  padding:14px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background:#fff;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:16px;
+  transition:.15s;
+}
 
-    button.member:active{
-      transform: translateY(1px);
-    }
+button.member:hover{
+  background:#f1f7ff;
+}
 
-    button.member:focus-visible{
-      outline:none;
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.18);
-      border-color:#93c5fd;
-    }
+button.member:active{
+  transform:translateY(1px);
+}
 
-    button.member:disabled{
-      cursor:not-allowed;
-      opacity:0.55;
-    }
+button.member:disabled{
+  cursor:not-allowed;
+  opacity:.55;
+}
 
-    .name{
-      font-weight:650;
-      color: var(--text);
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
+.name{
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
 
-    /* ✅ Inline check next to name */
-    .inlineCheck{
-      color:#16a34a;
-      font-weight:900;
-      display:none;
-      line-height:1;
-    }
-    .inlineCheck.show{ display:inline; }
+.inlineCheck{
+  color:#16a34a;
+  font-weight:900;
+  display:none;
+}
+.inlineCheck.show{ display:inline; }
 
-    .progress{
-      margin-top:14px;
-      font-size:13px;
-      color:var(--muted);
-    }
+.progress{
+  margin-top:14px;
+  font-size:13px;
+  color:var(--muted);
+}
 
-    .note{
-      margin-top:6px;
-      font-size:12px;
-      color:var(--muted);
-      line-height:1.5;
-    }
+.note{
+  margin-top:6px;
+  font-size:12px;
+  color:var(--muted);
+}
 
-    .greenCheck{
-      color:#16a34a;
-      font-weight:700;
-    }
+.greenCheck{
+  color:#16a34a;
+  font-weight:700;
+}
 
-    /* ✅ Reset button under tooltip */
-    .resetWrap{
-      margin-top:10px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-    .resetBtn{
-      border:1px solid var(--border);
-      background: var(--blueSoft);
-      color: var(--blue);
-      border-radius:12px;
-      padding:10px 12px;
-      font-size:13px;
-      font-weight:700;
-      cursor:pointer;
-    }
-    .resetBtn:hover{ filter: brightness(0.98); }
-    .resetBtn:active{ transform: translateY(1px); }
+.resetWrap{
+  margin-top:10px;
+}
 
-    /* ✅ Mobile: bigger tap targets + slightly larger text */
-    @media(max-width:520px){
-      .page{ padding: 14px; }
-      .wrap{ padding:14px; }
-      .card{ padding:14px; }
-      .titleLogo{ width:104px; height:104px; }
-      .title{ font-size:22px; }
-      .subtitle{ font-size:14px; }
-      button.member{ padding:14px; }
-    }
-  </style>
+.resetBtn{
+  border:1px solid var(--border);
+  background:#eff6ff;
+  color:var(--blue);
+  border-radius:12px;
+  padding:10px 12px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.resetBtn:hover{ filter:brightness(.98); }
+
+@media(max-width:520px){
+  .titleLogo{ width:104px;height:104px;}
+}
+</style>
 </head>
 
 <body>
-  <div class="page">
-    <div class="wrap">
-      <div class="titleBlock">
-        <img class="titleLogo"
-          src="https://lh3.googleusercontent.com/sitesv/APaQ0SRSoGSsWCwj8hWWCNYbVKNnxchIFpi0l2CuetL7BzJNbhDu1tLHbY-ZysRJlFYSVOE4qK0QLujlAjGnw5cSzGGbBtvsnpzfbZkOMTe-EVq50pIO0Qo4V6QwkW65Xm4hzHdO9pizguz8-rSJRDZ3pbsgxKjJy5pn7OOA21w6JFLQH88CkGUX1c0B1nN2MdghbmxAC-khWpAbNIHwkcK2Tg6W4gQTro2kLP9GIQ4=w1280"
-          alt="Logo">
-        <h2 class="title">Email the MDUSD Board Members</h2>
-      </div>
+<div class="page">
+<div class="wrap">
 
-      <div class="subtitle">
-        <b>English:</b> Enter your name, then click each person to <b>open</b> a prepared email. Review it and <b>send it</b>.<br>
-        <span class="es"><b>Español:</b> Escriba su nombre y luego haga clic en cada persona para <b>abrir</b> un correo ya preparado. Revíselo y <b>envíelo</b>.</span>
-      </div>
+<div class="titleBlock">
+<img class="titleLogo"
+src="https://lh3.googleusercontent.com/sitesv/APaQ0SRSoGSsWCwj8hWWCNYbVKNnxchIFpi0l2CuetL7BzJNbhDu1tLHbY-ZysRJlFYSVOE4qK0QLujlAjGnw5cSzGGbBtvsnpzfbZkOMTe-EVq50pIO0Qo4V6QwkW65Xm4hzHdO9pizguz8-rSJRDZ3pbsgxKjJy5pn7OOA21w6JFLQH88CkGUX1c0B1nN2MdghbmxAC-khWpAbNIHwkcK2Tg6W4gQTro2kLP9GIQ4=w1280">
+<h2 class="title">Email the MDUSD Board Members</h2>
+</div>
 
-      <div class="card">
-        <label>Your Name / <span class="es">Su Nombre</span></label>
-        <input id="senderName" type="text" placeholder="Your name">
+<div class="subtitle">
+<b>English:</b> Enter your name, then click each person to open a prepared email and send it.<br>
+<span class="es"><b>Español:</b> Escriba su nombre y luego haga clic en cada persona para abrir un correo listo y enviarlo.</span>
+</div>
 
-        <div class="nameWarning" id="nameWarning">
-          <b>English:</b> Please enter your name to enable the buttons.<br>
-          <span class="es"><b>Español:</b> Por favor escriba su nombre para habilitar los botones.</span>
-        </div>
+<div class="card">
 
-        <div class="gmailToggle" id="gmailToggle">
-          <label>
-            <input type="checkbox" id="gmailCheck">
-            Use Gmail website instead of your email app
-            <span class="es">/ Usar el sitio de Gmail en vez de su aplicación de correo</span>
-          </label>
-        </div>
+<label>Your Name / <span class="es">Su Nombre</span></label>
+<input id="senderName">
 
-        <div class="grid" id="buttons"></div>
+<div class="nameWarning" id="nameWarning">
+<b>English:</b> Please enter your name to enable buttons.<br>
+<span class="es"><b>Español:</b> Escriba su nombre para habilitar los botones.</span>
+</div>
 
-        <div class="progress" id="progressText">Opened: 0 / 9</div>
+<div class="gmailToggle" id="gmailToggle">
+<label>
+<input type="checkbox" id="gmailCheck">
+Use Gmail website instead of your email app
+<span class="es">/ Usar Gmail web en vez de su app de correo</span>
+</label>
+</div>
 
-        <div class="note" id="noteArea">
-          <span class="greenCheck">✓</span> <b>English:</b> Checks next to each name mean you opened the email — make sure you sent it.<br>
-          <span class="es"><span class="greenCheck">✓</span> <b>Español:</b> Las marcas frente a cada nombre significan que abrió el correo — asegúrese de haberlo enviado.</span>
+<div class="grid" id="buttons"></div>
 
-          <div class="resetWrap">
-            <button class="resetBtn" id="resetBtn" type="button">
-              Reset checkmarks<br><span class="es">Reiniciar marcas</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="progress" id="progressText">Opened: 0 / 9</div>
+
+<div class="note">
+<span class="greenCheck">✓</span> <b>English:</b> Check means email opened — make sure you sent it.<br>
+<span class="es"><span class="greenCheck">✓</span> <b>Español:</b> La marca indica que abrió el correo — asegúrese de enviarlo.</span>
+
+<div class="resetWrap">
+<button class="resetBtn" id="resetBtn">
+Reset checkmarks<br><span class="es">Reiniciar marcas</span>
+</button>
+</div>
+</div>
+
+</div>
+</div>
+</div>
 
 <script>
-const SUBJECT = "Concern Regarding Two-Way Dual Immersion Transition";
+const SUBJECT="Concern Regarding Two-Way Dual Immersion Transition";
 
-const BASE = `I am writing as a Bancroft Elementary community member to share my concern about the recently announced transition of the Two-Way Dual Immersion program.
+const BASE=`I am writing as a Bancroft Elementary community member to share my concern about the recently announced transition of the Two-Way Dual Immersion program.
 
-Like many families, we learned of this decision on January 28—just weeks before Kindergarten enrollment opens. This change has created significant uncertainty for our family and others as we try to plan for enrollment, childcare, and keeping siblings together.
+Like many families, we learned of this decision on January 28—just weeks before Kindergarten enrollment opens.
 
-I respectfully ask MDUSD to consider two specific actions:
+I respectfully ask MDUSD to consider:
 
-1. Delay the transition so families have adequate time to plan for enrollment, childcare, and sibling placement.
+1. Delay the transition.
+2. Engage in real dialogue with the community.
 
-2. Engage in real dialogue with the Bancroft community before moving forward, including sharing the data and rationale behind this decision and providing an opportunity for meaningful input.
+Thank you for your time.`;
 
-Families are not opposed to thoughtful planning or long-term sustainability. We are asking for transparency, time, and a collaborative process before a decision of this magnitude is implemented.
-
-Thank you for your time and for your service to our students and community. I appreciate your consideration and hope for an opportunity for dialogue.`;
-
-const MEMBERS = [
-  ["Debra Mason","masond@mdusd.org"],
-  ["Keisha Nzewi","nzewik@mdusd.org"],
-  ["Brian Lawrence","lawrenceb@mdusd.org"],
-  ["Linda Mayo","mayol@mdusd.org"],
-  ["Tom McDougall","mcdougallt@mdusd.org"],
-  ["Alan Barrera Orellana","barreraorellanaa@mdusd.org"],
-  ["Dr. Adam Clark","clarka@mdusd.org"],
-  ["Erin DeMartini","demartinie@mdusd.org"],
-  ["Kathryn Fireman","firemank@mdusd.org"]
+const MEMBERS=[
+["Debra Mason","masond@mdusd.org"],
+["Keisha Nzewi","nzewik@mdusd.org"],
+["Brian Lawrence","lawrenceb@mdusd.org"],
+["Linda Mayo","mayol@mdusd.org"],
+["Tom McDougall","mcdougallt@mdusd.org"],
+["Alan Barrera Orellana","barreraorellanaa@mdusd.org"],
+["Dr. Adam Clark","clarka@mdusd.org"],
+["Erin DeMartini","demartinie@mdusd.org"],
+["Kathryn Fireman","firemank@mdusd.org"]
 ];
 
 const storeKey="progressEmails_v2";
 const nameKey="senderName_v1";
 
-function isMobile(){
-  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+/* mobile hide toggle */
+if(/Android|iPhone|iPad/i.test(navigator.userAgent)){
+document.getElementById("gmailToggle").style.display="none";
 }
 
-if(isMobile()){
-  const toggle = document.getElementById("gmailToggle");
-  if(toggle) toggle.style.display="none";
-}
-
-/* Save/load sender name in localStorage */
-function loadSavedName(){
-  const saved = (localStorage.getItem(nameKey) || "").trim();
-  if(saved){
-    document.getElementById("senderName").value = saved;
-  }
-}
-function saveNameNow(){
-  const input = document.getElementById("senderName");
-  localStorage.setItem(nameKey, (input.value || "").trim());
-}
-
-function progress(){
-  return JSON.parse(localStorage.getItem(storeKey)||"{}");
-}
-
-function save(p){
-  localStorage.setItem(storeKey,JSON.stringify(p));
-}
+function progress(){ return JSON.parse(localStorage.getItem(storeKey)||"{}"); }
+function save(p){ localStorage.setItem(storeKey,JSON.stringify(p)); }
 
 function update(){
-  const p = progress();
-  const done = Object.keys(p).length;
-  document.getElementById("progressText").textContent = `Opened: ${done} / ${MEMBERS.length}`;
-
-  MEMBERS.forEach(m=>{
-    const email = m[1];
-    const check = document.querySelector(`[data-check="${email}"]`);
-    if(check){
-      if(p[email]) check.classList.add("show");
-      else check.classList.remove("show");
-    }
-  });
+const p=progress();
+document.getElementById("progressText").textContent=`Opened: ${Object.keys(p).length} / ${MEMBERS.length}`;
+MEMBERS.forEach(m=>{
+const check=document.querySelector(`[data-check="${m[1]}"]`);
+if(check) check.classList.toggle("show",p[m[1]]);
+});
 }
 
-// ----- Name gating -----
-function getSenderName(){
-  return (document.getElementById("senderName").value || "").trim();
+function getName(){ return senderName.value.trim(); }
+
+function showWarn(){
+nameWarning.classList.add("show");
+senderName.classList.add("needsName");
+senderName.focus();
 }
 
-function showNameWarning(){
-  const input = document.getElementById("senderName");
-  const warn = document.getElementById("nameWarning");
-  warn.classList.add("show");
-  input.classList.add("needsName");
-  try { input.focus(); } catch(e){}
+function refresh(){
+const ok=getName().length>0;
+document.querySelectorAll(".member").forEach(b=>b.disabled=!ok);
+if(ok){
+nameWarning.classList.remove("show");
+senderName.classList.remove("needsName");
 }
-
-function clearNameWarning(){
-  const input = document.getElementById("senderName");
-  const warn = document.getElementById("nameWarning");
-  warn.classList.remove("show");
-  input.classList.remove("needsName");
 }
-
-function setButtonsEnabled(enabled){
-  document.querySelectorAll("button.member").forEach(btn=>{
-    btn.disabled = !enabled;
-  });
-}
-
-function refreshNameGate(){
-  const nameOk = getSenderName().length > 0;
-  setButtonsEnabled(nameOk);
-
-  if(nameOk){
-    clearNameWarning();
-  }else{
-    document.getElementById("nameWarning").classList.add("show");
-    document.getElementById("senderName").classList.add("needsName");
-  }
-}
-// ----------------------
 
 function openEmail(email,name){
-  const sender = getSenderName();
-  if(!sender){
-    showNameWarning();
-    return;
-  }
+const sender=getName();
+if(!sender){ showWarn(); return; }
 
-  const body = `Dear ${name},
+const body=`Dear ${name},
 
 ${BASE}
 
 Sincerely,
 
-${sender}
-Bancroft Elementary Member`;
+${sender}`;
 
-  const gmail = document.getElementById("gmailCheck")?.checked;
+const link=gmailCheck.checked
+?`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(body)}`
+:`mailto:${email}?subject=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(body)}`;
 
-  const link = gmail
-    ? `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(body)}`
-    : `mailto:${email}?subject=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(body)}`;
-
-  const p = progress();
-  p[email] = true;
-  save(p);
-  update();
-
-  if(gmail) window.open(link,"_blank");
-  else window.location.href = link;
-}
-
-/* Reset button */
-function resetChecks(){
-  const ok = confirm(
-    "Reset checkmarks?\n\nThis will clear the checkmarks on this device.\n\n¿Reiniciar marcas?\n\nEsto borrará las marcas en este dispositivo."
-  );
-  if(!ok) return;
-
-  localStorage.removeItem(storeKey);
-  update();
+const p=progress(); p[email]=true; save(p); update();
+gmailCheck.checked?window.open(link):location.href=link;
 }
 
 function render(){
-  loadSavedName();
 
-  const c = document.getElementById("buttons");
-  MEMBERS.forEach(m=>{
-    const b = document.createElement("button");
-    b.className="member";
-    b.type="button";
-    b.innerHTML = `
-      <span class="name">
-        ${m[0]}
-        <span class="inlineCheck" data-check="${m[1]}">✓</span>
-      </span>
-      <span style="color: var(--muted); font-size: 13px;">Click</span>
-    `;
-    b.onclick = () => openEmail(m[1], m[0]);
-    c.appendChild(b);
-  });
+/* restore saved name */
+const saved=localStorage.getItem(nameKey);
+if(saved) senderName.value=saved;
 
-  update();
-  refreshNameGate();
+MEMBERS.forEach(m=>{
+const b=document.createElement("button");
+b.className="member";
+b.innerHTML=`<span class=name>${m[0]} <span class=inlineCheck data-check="${m[1]}">✓</span></span>`;
+b.onclick=()=>openEmail(m[1],m[0]);
+buttons.appendChild(b);
+});
 
-  const input = document.getElementById("senderName");
-  input.addEventListener("input", () => {
-    saveNameNow();
-    refreshNameGate();
-  });
-  input.addEventListener("blur", () => {
-    saveNameNow();
-    refreshNameGate();
-  });
-  input.addEventListener("focus", clearNameWarning);
+update();
+refresh();
 
-  document.getElementById("resetBtn").addEventListener("click", resetChecks);
+senderName.oninput=()=>{
+localStorage.setItem(nameKey,senderName.value);
+refresh();
+};
 }
+
+resetBtn.onclick=()=>{
+if(confirm("Reset checkmarks?\n\n¿Reiniciar marcas?")){
+localStorage.removeItem(storeKey);
+update();
+}
+};
 
 render();
 </script>
