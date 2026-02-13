@@ -181,6 +181,16 @@
       color:#334155;
       font-weight:600;
       flex: 0 0 auto;
+
+      /* allow 2 lines */
+      white-space: normal;
+      line-height: 1.15;
+    }
+
+    /* ✅ Spanish line styling (softer) */
+    .es{
+      opacity:0.72;   /* "softer" */
+      font-weight:500;
     }
 
     .progress{
@@ -247,22 +257,22 @@
 
       <div class="subtitle">
         <b>English:</b> Enter your name, then click each person to <b>open</b> a prepared email. Review it and <b>send it</b>.<br>
-        <b>Español:</b> Escriba su nombre y luego haga clic en cada persona para <b>abrir</b> un correo ya preparado. Revíselo y <b>envíelo</b>.
+        <span class="es"><b>Español:</b> Escriba su nombre y luego haga clic en cada persona para <b>abrir</b> un correo ya preparado. Revíselo y <b>envíelo</b>.</span>
       </div>
 
       <div class="card">
-        <label>Your Name / Su Nombre</label>
+        <label>Your Name / <span class="es">Su Nombre</span></label>
         <input id="senderName" type="text" placeholder="Your name">
 
         <div class="nameWarning" id="nameWarning">
           <b>English:</b> Please enter your name to enable the send buttons.<br>
-          <b>Español:</b> Por favor escriba su nombre para habilitar los botones de envío.
+          <span class="es"><b>Español:</b> Por favor escriba su nombre para habilitar los botones de envío.</span>
         </div>
 
         <div class="gmailToggle" id="gmailToggle">
           <label>
             <input type="checkbox" id="gmailCheck">
-            Use Gmail website instead of your email app / Usar el sitio de Gmail en vez de su aplicación de correo
+            Use Gmail website instead of your email app <span class="es">/ Usar el sitio de Gmail en vez de su aplicación de correo</span>
           </label>
         </div>
 
@@ -272,11 +282,11 @@
 
         <div class="note" id="noteArea">
           <span class="greenCheck">✓</span> <b>English:</b> Checks next to each name mean you opened the email — make sure you sent it.<br>
-          <span class="greenCheck">✓</span> <b>Español:</b> Las marcas frente a cada nombre significan que abrió el correo — asegúrese de haberlo enviado.
+          <span class="es"><span class="greenCheck">✓</span> <b>Español:</b> Las marcas frente a cada nombre significan que abrió el correo — asegúrese de haberlo enviado.</span>
 
           <div class="resetWrap">
             <button class="resetBtn" id="resetBtn" type="button">
-              Reset checkmarks / Reiniciar marcas
+              Reset checkmarks<br><span class="es">Reiniciar marcas</span>
             </button>
           </div>
         </div>
@@ -361,9 +371,9 @@ function update(){
       else check.classList.remove("show");
     }
 
-    // ✅ keep badge always "Send"
+    // ✅ keep badge always 2-line label
     const badge = document.querySelector(`[data-badge="${email}"]`);
-    if(badge) badge.textContent = "Generate Message<br>Generar Mensaje";
+    if(badge) badge.innerHTML = `Generate Message<br><span class="es">Generar Mensaje</span>`;
   });
 }
 
@@ -439,9 +449,8 @@ Bancroft Elementary Member`;
 
 /* ✅ Reset button */
 function resetChecks(){
-  // confirm in both languages (simple)
   const ok = confirm(
-    "Reset checkmarks? / ¿Reiniciar marcas?\n\nThis will clear the checkmarks on this device.\nEsto borrará las marcas en este dispositivo."
+    "Reset checkmarks?\n\nThis will clear the checkmarks on this device.\n\n¿Reiniciar marcas?\n\nEsto borrará las marcas en este dispositivo."
   );
   if(!ok) return;
 
@@ -459,13 +468,12 @@ function render(){
     b.className="member";
     b.type="button";
 
-    // ✅ checkmark is next to the name, badge stays Send
     b.innerHTML = `
       <span class="name">
         ${m[0]}
         <span class="inlineCheck" data-check="${m[1]}">✓</span>
       </span>
-      <span class="badge" data-badge="${m[1]}">Send</span>
+      <span class="badge" data-badge="${m[1]}"></span>
     `;
 
     b.onclick = () => openEmail(m[1], m[0]);
