@@ -14,17 +14,20 @@
   --muted:#475569;
   --border:#dbeafe;
   --blue:#1d4ed8;
+  --blueSoft:#eff6ff;
 }
 
 *{ box-sizing:border-box; }
 
 body{
   margin:0;
-  font-family:system-ui,sans-serif;
-  background:#fff;
+  padding:0;
+  font-family: system-ui, sans-serif;
+  background:#ffffff;
   color:var(--text);
 }
 
+/* Layout */
 .page{
   width:100%;
   max-width:920px;
@@ -37,14 +40,16 @@ body{
   padding:18px;
   border-radius:16px;
   border:1px solid var(--border);
+  width:100%;
 }
 
+/* Title */
 .titleBlock{
   display:flex;
   flex-direction:column;
   align-items:center;
   gap:12px;
-  margin-bottom:12px;
+  margin:0 0 12px 0;
   text-align:center;
 }
 
@@ -58,8 +63,10 @@ body{
 .title{
   font-size:22px;
   margin:0;
+  line-height:1.2;
 }
 
+/* Subtitle */
 .subtitle{
   color:var(--muted);
   font-size:14px;
@@ -67,11 +74,12 @@ body{
   line-height:1.5;
 }
 
-.es{
-  opacity:.7;
+.subtitle .es{
+  color:#64748b;
   font-weight:500;
 }
 
+/* Card */
 .card{
   background:#fff;
   border:1px solid var(--border);
@@ -79,25 +87,37 @@ body{
   padding:16px;
 }
 
+/* Labels */
 label{
   font-size:13px;
   color:var(--muted);
 }
 
-input{
+/* ---------- INPUT (improved differentiation) ---------- */
+input[type=text]{
   width:100%;
   padding:12px;
   margin-top:6px;
   border-radius:12px;
-  border:1px solid var(--border);
+  border:1px solid #c7d7ff;
+  background:#f9fbff;
   font-size:16px;
+  outline:none;
+  cursor:text;
+  transition:.15s;
 }
 
-input:focus{
+input[type=text]::placeholder{
+  color:#94a3b8;
+}
+
+input[type=text]:focus{
   border-color:#93c5fd;
-  box-shadow:0 0 0 3px rgba(37,99,235,.15);
+  background:#ffffff;
+  box-shadow:0 0 0 3px rgba(37,99,235,0.14);
 }
 
+/* Warning */
 .nameWarning{
   display:none;
   margin-top:8px;
@@ -112,14 +132,16 @@ input:focus{
 
 .needsName{
   border-color:#fca5a5 !important;
-  box-shadow:0 0 0 3px rgba(239,68,68,.12) !important;
+  box-shadow:0 0 0 3px rgba(239,68,68,0.12) !important;
 }
 
+/* Gmail toggle */
 .gmailToggle{
   margin-top:14px;
   font-size:14px;
 }
 
+/* Buttons grid */
 .grid{
   display:grid;
   grid-template-columns:1fr;
@@ -131,22 +153,25 @@ input:focus{
   .grid{ grid-template-columns:1fr 1fr; }
 }
 
-/* BUTTON ROW */
+/* Member buttons */
 button.member{
   padding:14px;
   border-radius:14px;
   border:1px solid var(--border);
   background:#fff;
   cursor:pointer;
+  text-align:left;
   display:flex;
   justify-content:space-between;
   align-items:center;
+  width:100%;
   font-size:16px;
   transition:.15s;
 }
 
 button.member:hover{
-  background:#f1f7ff;
+  background:#f8fbff;
+  border-color:#bfdbfe;
 }
 
 button.member:active{
@@ -155,7 +180,7 @@ button.member:active{
 
 button.member:disabled{
   cursor:not-allowed;
-  opacity:.55;
+  opacity:0.55;
 }
 
 .name{
@@ -165,6 +190,7 @@ button.member:disabled{
   gap:8px;
 }
 
+/* checkmark next to name */
 .inlineCheck{
   color:#16a34a;
   font-weight:900;
@@ -172,16 +198,24 @@ button.member:disabled{
 }
 .inlineCheck.show{ display:inline; }
 
+/* Progress */
 .progress{
   margin-top:14px;
   font-size:13px;
   color:var(--muted);
 }
 
+/* Tooltip note */
 .note{
   margin-top:6px;
   font-size:12px;
   color:var(--muted);
+  line-height:1.5;
+}
+
+.note .es{
+  color:#64748b;
+  font-weight:500;
 }
 
 .greenCheck{
@@ -189,13 +223,14 @@ button.member:disabled{
   font-weight:700;
 }
 
+/* Reset button */
 .resetWrap{
   margin-top:10px;
 }
 
 .resetBtn{
   border:1px solid var(--border);
-  background:#eff6ff;
+  background:var(--blueSoft);
   color:var(--blue);
   border-radius:12px;
   padding:10px 12px;
@@ -205,9 +240,15 @@ button.member:disabled{
 }
 
 .resetBtn:hover{ filter:brightness(.98); }
+.resetBtn:active{ transform:translateY(1px); }
 
+/* Mobile */
 @media(max-width:520px){
-  .titleLogo{ width:104px;height:104px;}
+  .page{ padding:14px; }
+  .wrap{ padding:14px; }
+  .card{ padding:14px; }
+  .titleLogo{ width:104px; height:104px; }
+  .title{ font-size:22px; }
 }
 </style>
 </head>
