@@ -116,21 +116,34 @@ input:focus{
   border-color:#fca5a5 !important;
 }
 
-.gmailToggle label{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin:0;
+.gmailToggle{
+  margin-top:14px;
+  width:100%;
 }
 
-.gmailToggle input{
-  transform: translateY(1px);
+/* Make the whole row layout predictable */
+.gmailToggle label{
+  display:grid;
+  grid-template-columns: 22px 1fr; /* checkbox column + text column */
+  align-items:start;
+  column-gap:10px;
+  row-gap:0;
+  cursor:pointer;
+  margin:0;
+  width:100%;
 }
-  
-.gmailToggle{
-  display:flex;
-  justify-content:flex-start;
-  align-items:center;
+
+/* Keep checkbox from stretching / taking space */
+.gmailToggle input[type="checkbox"]{
+  width:18px;
+  height:18px;
+  margin:2px 0 0 0; /* align with first text line */
+  justify-self:start;
+}
+
+/* Give the text all the space */
+.gmailToggle .toggleText{
+  line-height:1.25;
 }
 
 .grid{
@@ -239,10 +252,10 @@ button.member:disabled{
 </div>
 
 <div class="gmailToggle" id="gmailToggle">
-<label>
-<input type="checkbox" id="gmailCheck">
-Use Gmail website instead of your email app
-</label>
+  <label>
+    <input type="checkbox" id="gmailCheck">
+    <span class="toggleText">Use Gmail website instead of your email app</span>
+  </label>
 </div>
 
 <div class="grid" id="buttons"></div>
