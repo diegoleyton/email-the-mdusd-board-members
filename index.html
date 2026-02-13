@@ -73,6 +73,11 @@
       line-height:1.5;
     }
 
+    .es{
+      opacity:0.72;   /* softer Spanish */
+      font-weight:500;
+    }
+
     .card{
       background:#fff;
       border:1px solid var(--border);
@@ -134,6 +139,7 @@
       .grid{ grid-template-columns:1fr 1fr; }
     }
 
+    /* ✅ The whole name row is the button */
     button.member{
       padding:14px;
       border-radius:14px;
@@ -145,7 +151,22 @@
       justify-content:space-between;
       align-items:center;
       width:100%;
-      font-size:16px; /* helps mobile readability */
+      font-size:16px;
+      transition: background 120ms ease, transform 80ms ease, box-shadow 120ms ease;
+    }
+
+    button.member:hover{
+      background:#f8fbff;
+    }
+
+    button.member:active{
+      transform: translateY(1px);
+    }
+
+    button.member:focus-visible{
+      outline:none;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.18);
+      border-color:#93c5fd;
     }
 
     button.member:disabled{
@@ -154,14 +175,14 @@
     }
 
     .name{
-      font-weight:600;
+      font-weight:650;
       color: var(--text);
       display:flex;
       align-items:center;
       gap:8px;
     }
 
-    /* ✅ Inline check shown NEXT TO the name (does not replace button badge) */
+    /* ✅ Inline check next to name */
     .inlineCheck{
       color:#16a34a;
       font-weight:900;
@@ -169,29 +190,6 @@
       line-height:1;
     }
     .inlineCheck.show{ display:inline; }
-
-    .badge{
-      min-width:44px;
-      text-align:center;
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      background:transparent;
-      border:1px solid #cbd5e1;
-      color:#334155;
-      font-weight:600;
-      flex: 0 0 auto;
-
-      /* allow 2 lines */
-      white-space: normal;
-      line-height: 1.15;
-    }
-
-    /* ✅ Spanish line styling (softer) */
-    .es{
-      opacity:0.72;   /* "softer" */
-      font-weight:500;
-    }
 
     .progress{
       margin-top:14px;
@@ -238,8 +236,8 @@
       .wrap{ padding:14px; }
       .card{ padding:14px; }
       .titleLogo{ width:104px; height:104px; }
-      .title{ font-size:22px; }         /* keep readable */
-      .subtitle{ font-size:14px; }      /* keep readable */
+      .title{ font-size:22px; }
+      .subtitle{ font-size:14px; }
       button.member{ padding:14px; }
     }
   </style>
@@ -265,14 +263,15 @@
         <input id="senderName" type="text" placeholder="Your name">
 
         <div class="nameWarning" id="nameWarning">
-          <b>English:</b> Please enter your name to enable the send buttons.<br>
-          <span class="es"><b>Español:</b> Por favor escriba su nombre para habilitar los botones de envío.</span>
+          <b>English:</b> Please enter your name to enable the buttons.<br>
+          <span class="es"><b>Español:</b> Por favor escriba su nombre para habilitar los botones.</span>
         </div>
 
         <div class="gmailToggle" id="gmailToggle">
           <label>
             <input type="checkbox" id="gmailCheck">
-            Use Gmail website instead of your email app <span class="es">/ Usar el sitio de Gmail en vez de su aplicación de correo</span>
+            Use Gmail website instead of your email app
+            <span class="es">/ Usar el sitio de Gmail en vez de su aplicación de correo</span>
           </label>
         </div>
 
@@ -335,12 +334,11 @@ if(isMobile()){
   if(toggle) toggle.style.display="none";
 }
 
-/* ✅ Save/load sender name in localStorage */
+/* Save/load sender name in localStorage */
 function loadSavedName(){
   const saved = (localStorage.getItem(nameKey) || "").trim();
   if(saved){
-    const input = document.getElementById("senderName");
-    input.value = saved;
+    document.getElementById("senderName").value = saved;
   }
 }
 function saveNameNow(){
@@ -363,17 +361,11 @@ function update(){
 
   MEMBERS.forEach(m=>{
     const email = m[1];
-
-    // ✅ show check next to the name
     const check = document.querySelector(`[data-check="${email}"]`);
     if(check){
       if(p[email]) check.classList.add("show");
       else check.classList.remove("show");
     }
-
-    // ✅ keep badge always 2-line label
-    const badge = document.querySelector(`[data-badge="${email}"]`);
-    if(badge) badge.innerHTML = `Generate Message<br><span class="es">Generar Mensaje</span>`;
   });
 }
 
@@ -447,7 +439,7 @@ Bancroft Elementary Member`;
   else window.location.href = link;
 }
 
-/* ✅ Reset button */
+/* Reset button */
 function resetChecks(){
   const ok = confirm(
     "Reset checkmarks?\n\nThis will clear the checkmarks on this device.\n\n¿Reiniciar marcas?\n\nEsto borrará las marcas en este dispositivo."
@@ -459,7 +451,6 @@ function resetChecks(){
 }
 
 function render(){
-  // load saved name before gating
   loadSavedName();
 
   const c = document.getElementById("buttons");
@@ -467,15 +458,13 @@ function render(){
     const b = document.createElement("button");
     b.className="member";
     b.type="button";
-
     b.innerHTML = `
       <span class="name">
         ${m[0]}
         <span class="inlineCheck" data-check="${m[1]}">✓</span>
       </span>
-      <span class="badge" data-badge="${m[1]}"></span>
+      <span style="color: var(--muted); font-size: 13px;">Click</span>
     `;
-
     b.onclick = () => openEmail(m[1], m[0]);
     c.appendChild(b);
   });
