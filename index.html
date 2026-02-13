@@ -153,7 +153,22 @@
       opacity:0.55;
     }
 
-    .name{ font-weight:600; color: var(--text); }
+    .name{
+      font-weight:600;
+      color: var(--text);
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    /* ✅ Inline check shown NEXT TO the name (does not replace button badge) */
+    .inlineCheck{
+      color:#16a34a;
+      font-weight:900;
+      display:none;
+      line-height:1;
+    }
+    .inlineCheck.show{ display:inline; }
 
     .badge{
       min-width:44px;
@@ -166,13 +181,6 @@
       color:#334155;
       font-weight:600;
       flex: 0 0 auto;
-    }
-
-    .badge.done{
-      background:transparent;
-      border-color:#cbd5e1;
-      color:#16a34a;
-      font-weight:800;
     }
 
     .progress{
@@ -192,6 +200,27 @@
       color:#16a34a;
       font-weight:700;
     }
+
+    /* ✅ Reset button under tooltip */
+    .resetWrap{
+      margin-top:10px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .resetBtn{
+      border:1px solid var(--border);
+      background: var(--blueSoft);
+      color: var(--blue);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:13px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .resetBtn:hover{ filter: brightness(0.98); }
+    .resetBtn:active{ transform: translateY(1px); }
 
     /* ✅ Mobile: bigger tap targets + slightly larger text */
     @media(max-width:520px){
@@ -241,9 +270,15 @@
 
         <div class="progress" id="progressText">Opened: 0 / 9</div>
 
-        <div class="note">
+        <div class="note" id="noteArea">
           <span class="greenCheck">✓</span> <b>English:</b> Checks next to each name mean you opened the email — make sure you sent it.<br>
           <span class="greenCheck">✓</span> <b>Español:</b> Las marcas frente a cada nombre significan que abrió el correo — asegúrese de haberlo enviado.
+
+          <div class="resetWrap">
+            <button class="resetBtn" id="resetBtn" type="button">
+              Reset checkmarks / Reiniciar marcas
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -279,6 +314,7 @@ const MEMBERS = [
 ];
 
 const storeKey="progressEmails_v2";
+const nameKey="senderName_v1";
 
 function isMobile(){
   return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -287,6 +323,19 @@ function isMobile(){
 if(isMobile()){
   const toggle = document.getElementById("gmailToggle");
   if(toggle) toggle.style.display="none";
+}
+
+/* ✅ Save/load sender name in localStorage */
+function loadSavedName(){
+  const saved = (localStorage.getItem(nameKey) || "").trim();
+  if(saved){
+    const input = document.getElementById("senderName");
+    input.value = saved;
+  }
+}
+function saveNameNow(){
+  const input = document.getElementById("senderName");
+  localStorage.setItem(nameKey, (input.value || "").trim());
 }
 
 function progress(){
@@ -304,16 +353,17 @@ function update(){
 
   MEMBERS.forEach(m=>{
     const email = m[1];
-    const badge = document.querySelector(`[data-badge="${email}"]`);
-    if(!badge) return;
 
-    if(p[email]){
-      badge.classList.add("done");
-      badge.textContent = "✓";
-    }else{
-      badge.classList.remove("done");
-      badge.textContent = "Send";
+    // ✅ show check next to the name
+    const check = document.querySelector(`[data-check="${email}"]`);
+    if(check){
+      if(p[email]) check.classList.add("show");
+      else check.classList.remove("show");
     }
+
+    // ✅ keep badge always "Send"
+    const badge = document.querySelector(`[data-badge="${email}"]`);
+    if(badge) badge.textContent = "Send";
   });
 }
 
@@ -387,13 +437,37 @@ Bancroft Elementary Member`;
   else window.location.href = link;
 }
 
+/* ✅ Reset button */
+function resetChecks(){
+  // confirm in both languages (simple)
+  const ok = confirm(
+    "Reset checkmarks? / ¿Reiniciar marcas?\n\nThis will clear the checkmarks on this device.\nEsto borrará las marcas en este dispositivo."
+  );
+  if(!ok) return;
+
+  localStorage.removeItem(storeKey);
+  update();
+}
+
 function render(){
+  // load saved name before gating
+  loadSavedName();
+
   const c = document.getElementById("buttons");
   MEMBERS.forEach(m=>{
     const b = document.createElement("button");
     b.className="member";
     b.type="button";
-    b.innerHTML = `<span class="name">${m[0]}</span><span class="badge" data-badge="${m[1]}">Send</span>`;
+
+    // ✅ checkmark is next to the name, badge stays Send
+    b.innerHTML = `
+      <span class="name">
+        ${m[0]}
+        <span class="inlineCheck" data-check="${m[1]}">✓</span>
+      </span>
+      <span class="badge" data-badge="${m[1]}">Send</span>
+    `;
+
     b.onclick = () => openEmail(m[1], m[0]);
     c.appendChild(b);
   });
@@ -402,9 +476,17 @@ function render(){
   refreshNameGate();
 
   const input = document.getElementById("senderName");
-  input.addEventListener("input", refreshNameGate);
-  input.addEventListener("blur", refreshNameGate);
+  input.addEventListener("input", () => {
+    saveNameNow();
+    refreshNameGate();
+  });
+  input.addEventListener("blur", () => {
+    saveNameNow();
+    refreshNameGate();
+  });
   input.addEventListener("focus", clearNameWarning);
+
+  document.getElementById("resetBtn").addEventListener("click", resetChecks);
 }
 
 render();
