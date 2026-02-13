@@ -1,0 +1,390 @@
+<style>
+  :root{
+    --bg:#f3f7ff;
+    --card:#ffffff;
+    --text:#0f172a;
+    --muted:#475569;
+    --border:#dbeafe;
+    --blue:#1d4ed8;
+    --blueSoft:#eff6ff;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .wrap{
+    font-family: system-ui, sans-serif;
+    background: var(--bg);
+    padding:18px;
+    border-radius:16px;
+    border:1px solid var(--border);
+    width:100%;
+    touch-action: pan-y;
+  }
+
+  /* Title block with logo ABOVE title */
+  .titleBlock{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    margin:0 0 12px 0;
+    text-align:center;
+  }
+
+  .titleLogo{
+    width:84px;
+    height:84px;
+    object-fit:contain;
+    border-radius:12px;
+  }
+
+  .title{
+    font-size:22px;
+    margin:0;
+    color: var(--text);
+    line-height:1.2;
+  }
+
+  .subtitle{
+    color:var(--muted);
+    font-size:14px;
+    margin-bottom:16px;
+    line-height:1.5;
+  }
+
+  .card{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:16px;
+  }
+
+  label{
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  input[type=text]{
+    width:100%;
+    padding:12px;
+    margin-top:6px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    font-size:15px;
+    outline:none;
+  }
+  input[type=text]:focus{
+    border-color:#93c5fd;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.14);
+  }
+
+  /* Inline warning message */
+  .nameWarning{
+    display:none;
+    margin-top:8px;
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid #fecaca;
+    background:#fff1f2;
+    color:#7f1d1d;
+    font-size:13px;
+    line-height:1.35;
+  }
+  .nameWarning.show{ display:block; }
+
+  /* Red outline when missing */
+  .needsName{
+    border-color:#fca5a5 !important;
+    box-shadow: 0 0 0 3px rgba(239,68,68,0.12) !important;
+  }
+
+  .gmailToggle{
+    margin-top:14px;
+    font-size:14px;
+    color:var(--text);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+    margin-top:16px;
+  }
+
+  @media (min-width:640px){
+    .grid{ grid-template-columns:1fr 1fr; }
+  }
+
+  button.member{
+    padding:14px;
+    border-radius:14px;
+    border:1px solid var(--border);
+    background:#fff;
+    cursor:pointer;
+    text-align:left;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    width:100%;
+  }
+
+  button.member:disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+  }
+
+  .name{ font-weight:600; color: var(--text); }
+
+  .badge{
+    min-width:44px;
+    text-align:center;
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:999px;
+    background:transparent;
+    border:1px solid #cbd5e1;
+    color:#334155;
+    font-weight:600;
+  }
+
+  .badge.done{
+    background:transparent;
+    border-color:#cbd5e1;
+    color:#16a34a;
+    font-weight:800;
+  }
+
+  .progress{
+    margin-top:14px;
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  .note{
+    margin-top:6px;
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.5;
+  }
+
+  .greenCheck{
+    color:#16a34a;
+    font-weight:700;
+  }
+
+  @media(max-width:520px){
+    .gmailToggle{ display:none; }
+    .titleLogo{ width:72px; height:72px; }
+    .title{ font-size:20px; }
+  }
+</style>
+
+<div style="height:20px;"></div>
+<div class="wrap">
+  <div class="titleBlock">
+    <img class="titleLogo"
+      src="https://lh3.googleusercontent.com/sitesv/APaQ0SRSoGSsWCwj8hWWCNYbVKNnxchIFpi0l2CuetL7BzJNbhDu1tLHbY-ZysRJlFYSVOE4qK0QLujlAjGnw5cSzGGbBtvsnpzfbZkOMTe-EVq50pIO0Qo4V6QwkW65Xm4hzHdO9pizguz8-rSJRDZ3pbsgxKjJy5pn7OOA21w6JFLQH88CkGUX1c0B1nN2MdghbmxAC-khWpAbNIHwkcK2Tg6W4gQTro2kLP9GIQ4=w1280"
+      alt="Logo">
+    <h2 class="title">Email the MDUSD Board Members</h2>
+  </div>
+
+  <div class="subtitle">
+    <b>English:</b> Enter your name, then click each person to <b>open</b> a prepared email. Review it and <b>send it</b>.<br>
+    <b>Español:</b> Escriba su nombre y luego haga clic en cada persona para <b>abrir</b> un correo ya preparado. Revíselo y <b>envíelo</b>.
+  </div>
+
+  <div class="card">
+
+    <label>Your Name / Su Nombre</label>
+    <input id="senderName" type="text" placeholder="Your name">
+
+    <div class="nameWarning" id="nameWarning">
+      <b>English:</b> Please enter your name to enable the send buttons.<br>
+      <b>Español:</b> Por favor escriba su nombre para habilitar los botones de envío.
+    </div>
+
+    <div class="gmailToggle" id="gmailToggle">
+      <label>
+        <input type="checkbox" id="gmailCheck">
+        Use Gmail website instead of your email app / Usar el sitio de Gmail en vez de su aplicación de correo
+      </label>
+    </div>
+
+    <div class="grid" id="buttons"></div>
+
+    <div class="progress" id="progressText">Opened: 0 / 9</div>
+
+    <div class="note">
+      <span class="greenCheck">✓</span> <b>English:</b> Checks next to each name mean you opened the email — make sure you sent it.<br>
+      <span class="greenCheck">✓</span> <b>Español:</b> Las marcas frente a cada nombre significan que abrió el correo — asegúrese de haberlo enviado.
+    </div>
+
+  </div>
+</div>
+<div style="height:20px;"></div>
+
+<script>
+const SUBJECT = "Concern Regarding Two-Way Dual Immersion Transition";
+
+const BASE = `I am writing as a Bancroft Elementary community member to share my concern about the recently announced transition of the Two-Way Dual Immersion program.
+
+Like many families, we learned of this decision on January 28—just weeks before Kindergarten enrollment opens. This change has created significant uncertainty for our family and others as we try to plan for enrollment, childcare, and keeping siblings together.
+
+I respectfully ask MDUSD to consider two specific actions:
+
+1. Delay the transition so families have adequate time to plan for enrollment, childcare, and sibling placement.
+
+2. Engage in real dialogue with the Bancroft community before moving forward, including sharing the data and rationale behind this decision and providing an opportunity for meaningful input.
+
+Families are not opposed to thoughtful planning or long-term sustainability. We are asking for transparency, time, and a collaborative process before a decision of this magnitude is implemented.
+
+Thank you for your time and for your service to our students and community. I appreciate your consideration and hope for an opportunity for dialogue.`;
+
+const MEMBERS = [
+  ["Debra Mason","masond@mdusd.org"],
+  ["Keisha Nzewi","nzewik@mdusd.org"],
+  ["Brian Lawrence","lawrenceb@mdusd.org"],
+  ["Linda Mayo","mayol@mdusd.org"],
+  ["Tom McDougall","mcdougallt@mdusd.org"],
+  ["Alan Barrera Orellana","barreraorellanaa@mdusd.org"],
+  ["Dr. Adam Clark","clarka@mdusd.org"],
+  ["Erin DeMartini","demartinie@mdusd.org"],
+  ["Kathryn Fireman","firemank@mdusd.org"]
+];
+
+const storeKey="progressEmails_v2";
+
+function isMobile(){
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+if(isMobile()){
+  const toggle = document.getElementById("gmailToggle");
+  if(toggle) toggle.style.display="none";
+}
+
+function progress(){
+  return JSON.parse(localStorage.getItem(storeKey)||"{}");
+}
+
+function save(p){
+  localStorage.setItem(storeKey,JSON.stringify(p));
+}
+
+function update(){
+  const p = progress();
+  const done = Object.keys(p).length;
+  document.getElementById("progressText").textContent = `Opened: ${done} / ${MEMBERS.length}`;
+
+  MEMBERS.forEach(m=>{
+    const email = m[1];
+    const badge = document.querySelector(`[data-badge="${email}"]`);
+    if(!badge) return;
+
+    if(p[email]){
+      badge.classList.add("done");
+      badge.textContent = "✓";
+    }else{
+      badge.classList.remove("done");
+      badge.textContent = "Send";
+    }
+  });
+}
+
+// ----- Name gating -----
+function getSenderName(){
+  return (document.getElementById("senderName").value || "").trim();
+}
+
+function showNameWarning(){
+  const input = document.getElementById("senderName");
+  const warn = document.getElementById("nameWarning");
+  warn.classList.add("show");
+  input.classList.add("needsName");
+  try { input.focus(); } catch(e){}
+}
+
+function clearNameWarning(){
+  const input = document.getElementById("senderName");
+  const warn = document.getElementById("nameWarning");
+  warn.classList.remove("show");
+  input.classList.remove("needsName");
+}
+
+function setButtonsEnabled(enabled){
+  document.querySelectorAll("button.member").forEach(btn=>{
+    btn.disabled = !enabled;
+  });
+}
+
+function refreshNameGate(){
+  const nameOk = getSenderName().length > 0;
+  setButtonsEnabled(nameOk);
+
+  if(nameOk){
+    clearNameWarning();
+  }else{
+    document.getElementById("nameWarning").classList.add("show");
+    document.getElementById("senderName").classList.add("needsName");
+  }
+}
+// ----------------------
+
+function openEmail(email,name){
+  const sender = getSenderName();
+  if(!sender){
+    showNameWarning();
+    return;
+  }
+
+  const body = `Dear ${name},
+
+${BASE}
+
+Sincerely,
+
+${sender}
+Bancroft Elementary Member`;
+
+  const gmail = document.getElementById("gmailCheck")?.checked;
+
+  const link = gmail
+    ? `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(body)}`
+    : `mailto:${email}?subject=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(body)}`;
+
+  const p = progress();
+  p[email] = true;
+  save(p);
+  update();
+
+  if(gmail) window.open(link,"_blank");
+  else window.location.href = link;
+}
+
+function render(){
+  const c = document.getElementById("buttons");
+  MEMBERS.forEach(m=>{
+    const b = document.createElement("button");
+    b.className="member";
+    b.type="button";
+    b.innerHTML = `<span class="name">${m[0]}</span><span class="badge" data-badge="${m[1]}">Send</span>`;
+    b.onclick = () => openEmail(m[1], m[0]);
+    c.appendChild(b);
+  });
+
+  update();
+  refreshNameGate();
+
+  const input = document.getElementById("senderName");
+  input.addEventListener("input", refreshNameGate);
+  input.addEventListener("blur", refreshNameGate);
+  input.addEventListener("focus", clearNameWarning);
+}
+
+render();
+</script>
