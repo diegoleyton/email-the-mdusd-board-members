@@ -367,7 +367,8 @@ const TO_ALL = MEMBERS.map(m => m[1]).join(",");
 const STRINGS = {
   en: {
     pageTitle: "Email the MDUSD Board Members",
-    subtitle: `Fill out the form, then click <b>Generate Message</b> to open your email with a prepared draft addressed to the Board. Please review it and send it.`,
+    subtitle: `Fill out the form, then click <b>Generate Message</b> to open your email with a prepared draft addressed to the Board. Please review it and send it.<br><br>
+<b>Note:</b> We will keep a counter of how many people generate (or copy) the message. Your name and connection to Bancroft will be recorded for this count, but not your email address.`,
     langHint: `Note: The email message will always be generated in <b>English</b>.`,
     lblName: "Your Name",
     namePh: "Your name",
@@ -395,7 +396,8 @@ const STRINGS = {
   },
   es: {
     pageTitle: "Enviar correo al Board de MDUSD",
-    subtitle: `Complete el formulario y luego presione <b>Generar Mensaje</b> para abrir su correo con un borrador listo dirigido al Board. Por favor revise y envíe.`,
+    subtitle: `Complete el formulario y luego presione <b>Generar Mensaje</b> para abrir su correo con un borrador listo dirigido al Board. Por favor revise y envíe.<br><br>
+<b>Nota:</b> Mantendremos un contador de cuántas personas generan (o copian) el mensaje. Para este conteo se registrará su nombre y su relación con Bancroft, no su correo.`,
     langHint: `Nota: El mensaje del correo siempre se generará en <b>inglés</b>.`,
     lblName: "Su Nombre",
     namePh: "Su nombre",
@@ -425,6 +427,7 @@ const STRINGS = {
 
 const nameKey = "mdusd_senderName_v1";
 const langKey = "mdusd_lang_v1";
+const TRACK_URL =  "https://script.google.com/macros/s/AKfycbyDm3qDjDS-Fh-jSFSBNoBiS8GBI3RCDO_L0WpZyHTaAHJ7RAbN8DTFy6EdJeypLfL78A/exec";
 
 /* =========================================================
    HELPERS
@@ -584,6 +587,7 @@ ${connectionNormalized}`;
 function openEmailToAll(){
   if (!validate()) return;
 
+  trackEvent("generate");
   const gmail = document.getElementById("gmailCheck").checked;
   const body = buildBodyEnglish();
 
@@ -624,18 +628,59 @@ function toggleManualMenu(){
 }
 
 function setupManualButtons(){
-  document.getElementById("copySubjectBtn").addEventListener("click", ()=>{
-    copyText(SUBJECT);
-  });
+  document.getElementById("copySubjectBtn").addEventListener("click", async ()=>{
+  const ok = await copyText(SUBJECT);
+  if(ok) trackEvent("copy_subject");
+});
 
-  document.getElementById("copyToBtn").addEventListener("click", ()=>{
-    copyText(TO_ALL);
-  });
+document.getElementById("copyToBtn").addEventListener("click", async ()=>{
+  const ok = await copyText(TO_ALL);
+  if(ok) trackEvent("copy_to");
+});
 
-  document.getElementById("copyBodyBtn").addEventListener("click", ()=>{
-    copyText(buildBodyEnglish());
-  });
+document.getElementById("copyBodyBtn").addEventListener("click", async ()=>{
+  const ok = await copyText(buildBodyEnglish());
+  if(ok) trackEvent("copy_body");
+});
+
 }
+
+/* =========================================================
+   LOGGING
+========================================================= */
+const anonIdKey = "mdusd_anon_id_v1";
+function getAnonId(){
+  let id = localStorage.getItem(anonIdKey);
+  if(!id){
+    id = (crypto?.randomUUID?.() || ("id_" + Math.random().toString(16).slice(2) + Date.now()));
+    localStorage.setItem(anonIdKey, id);
+  }
+  return id;
+}
+
+async function trackEvent(action){
+  // action: "generate" | "copy_subject" | "copy_to" | "copy_body"
+  const payload = {
+    action,
+    name: getSenderName(),
+    connection: getConnectionValue(), // normalized EN
+    anonId: getAnonId(),
+    userAgent: navigator.userAgent,
+    referrer: document.referrer || location.href
+  };
+
+  // Fire-and-forget (don’t block UX)
+  try{
+    fetch(TRACK_URL, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(payload)
+    });
+  }catch(e){
+    // ignore
+  }
+}
+
 
 /* =========================================================
    INIT
