@@ -659,27 +659,26 @@ function getAnonId(){
 }
 
 async function trackEvent(action){
-  // action: "generate" | "copy_subject" | "copy_to" | "copy_body"
   const payload = {
     action,
     name: getSenderName(),
-    connection: getConnectionValue(), // normalized EN
+    connection: getConnectionValue(),
     anonId: getAnonId(),
     userAgent: navigator.userAgent,
     referrer: document.referrer || location.href
   };
 
-  // Fire-and-forget (don’t block UX)
   try{
     fetch(TRACK_URL, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(payload)
+      method: "POST",
+      // NO headers -> evita preflight
+      body: JSON.stringify(payload) // se envía como text/plain por defecto
     });
   }catch(e){
     // ignore
   }
 }
+
 
 
 /* =========================================================
