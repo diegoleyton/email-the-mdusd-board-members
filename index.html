@@ -244,6 +244,34 @@ input:focus, select:focus{
   display:none;
 }
 .copied.show{ display:block; }
+
+/* Counter pill */
+.counterPill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:12px;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:#fff;
+  font-size:13px;
+  color:var(--muted);
+}
+.counterNumber{
+  font-weight:900;
+  color:var(--text);
+}
+.counterDot{
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:#16a34a;
+  display:inline-block;
+}
+.counterSub{
+  opacity:.85;
+}
 </style>
 </head>
 
@@ -265,6 +293,14 @@ input:focus, select:focus{
       </select>
 
       <div class="hint" id="langHint"></div>
+
+      <!-- Counter shown near the top -->
+      <div class="counterPill" id="counterPill" style="display:none;">
+        <span class="counterDot" aria-hidden="true"></span>
+        <span id="counterLabel"></span>
+        <span class="counterNumber" id="counterValue">—</span>
+        <span class="counterSub" id="counterSuffix"></span>
+      </div>
     </div>
 
     <div class="subtitle" id="subtitle"></div>
@@ -343,7 +379,6 @@ Thank you for your time, service to our district, and for ensuring that decision
 
 /* =========================================================
    RECIPIENTS
-   Manual copy: ALL addresses together, no BCC (as requested)
 ========================================================= */
 
 const MEMBERS = [
@@ -392,7 +427,9 @@ const STRINGS = {
     copyTo: "Copy recipients",
     copyBody: "Copy message",
     copied: "Copied ✓",
-    needForm: "Please fill out the form first."
+    needForm: "Please fill out the form first.",
+    counterLabel: "Participants:",
+    counterSuffix: "(unique)"
   },
   es: {
     pageTitle: "Enviar correo al Board de MDUSD",
@@ -421,13 +458,17 @@ const STRINGS = {
     copyTo: "Copiar destinatarios",
     copyBody: "Copiar mensaje",
     copied: "Copiado ✓",
-    needForm: "Primero complete el formulario."
+    needForm: "Primero complete el formulario.",
+    counterLabel: "Participantes:",
+    counterSuffix: "(únicos)"
   }
 };
 
 const nameKey = "mdusd_senderName_v1";
 const langKey = "mdusd_lang_v1";
-const TRACK_URL =  "https://script.google.com/macros/s/AKfycbwX72Qu6MmWa2FvmAWT-5mEioRtIPZDV10xG3DNzjw5_2zAFPCdjMr3Qgjs5L92XaZAqQ/exec";
+
+// IMPORTANT: this must be the Web App /exec URL
+const TRACK_URL = "https://script.google.com/macros/s/AKfycbzLYxe6mTdCKx8GvBLNNnOaDIcqUG6I1vqXC4FMv4HErVpBlMlTAmJCy6BXegvF_OzroA/exec";
 
 /* =========================================================
    HELPERS
@@ -464,13 +505,11 @@ function showCopiedToast(){
 }
 
 async function copyText(text){
-  // modern clipboard (requires https or localhost)
   try{
     await navigator.clipboard.writeText(text);
     showCopiedToast();
     return true;
   }catch(err){
-    // fallback for older browsers / non-https
     try{
       const ta=document.createElement("textarea");
       ta.value=text;
@@ -499,6 +538,10 @@ function applyLanguage(){
 
   document.getElementById("lblLang").textContent = "Language/Idioma";
   document.getElementById("langHint").innerHTML = s.langHint;
+
+  // Counter labels
+  document.getElementById("counterLabel").textContent = s.counterLabel;
+  document.getElementById("counterSuffix").textContent = s.counterSuffix;
 
   document.getElementById("lblName").textContent = s.lblName;
   document.getElementById("senderName").placeholder = s.namePh;
@@ -530,12 +573,52 @@ function applyLanguage(){
 
   s.connOptions.forEach(([label, value])=>{
     const o = document.createElement("option");
-    o.value = value;       // normalized (EN) used in email signature
-    o.textContent = label; // displayed in UI language
+    o.value = value;
+    o.textContent = label;
     sel.appendChild(o);
   });
 
   if (current) sel.value = current;
+}
+
+/* =========================================================
+   COUNTER (reads from Apps Script doGet)
+   Requires Apps Script doGet to return: { ok:true, peopleCount: <number> }
+========================================================= */
+
+async function refreshCounter(){
+  // Cache for 10 minutes so you don't hammer Apps Script
+  const cacheKey = "mdusd_people_count_cache_v1";
+  const cached = localStorage.getItem(cacheKey);
+  if (cached){
+    try{
+      const obj = JSON.parse(cached);
+      if (obj && typeof obj.value === "number" && (Date.now() - obj.ts) < 10*60*1000){
+        setCounterUI(obj.value);
+        return;
+      }
+    }catch(e){}
+  }
+
+  try{
+    const res = await fetch(TRACK_URL + "?stats=1", { method:"GET" });
+    const json = await res.json();
+    if (json && json.ok && typeof json.peopleCount === "number"){
+      localStorage.setItem(cacheKey, JSON.stringify({ value: json.peopleCount, ts: Date.now() }));
+      setCounterUI(json.peopleCount);
+    }
+  }catch(e){
+    // silent; keep UI hidden if it fails
+  }
+}
+
+function setCounterUI(count){
+  const pill = document.getElementById("counterPill");
+  const val = document.getElementById("counterValue");
+  if (!pill || !val) return;
+
+  val.textContent = String(count);
+  pill.style.display = "inline-flex";
 }
 
 /* =========================================================
@@ -547,8 +630,6 @@ function setManualEnabled(enabled){
   link.classList.toggle("disabled", !enabled);
   link.setAttribute("aria-disabled", enabled ? "false" : "true");
   link.tabIndex = enabled ? 0 : -1;
-
-  // if becomes disabled, hide menu
   if (!enabled) document.getElementById("manualMenu").classList.remove("show");
 }
 
@@ -575,8 +656,7 @@ function validate(){
 
 function buildBodyEnglish(){
   const sender = getSenderName();
-  const connectionNormalized = getConnectionValue(); // EN
-
+  const connectionNormalized = getConnectionValue();
   return `${BASE}
 
 Sincerely,
@@ -588,11 +668,10 @@ function openEmailToAll(){
   if (!validate()) return;
 
   trackEvent("generate");
+
   const gmail = document.getElementById("gmailCheck").checked;
   const body = buildBodyEnglish();
 
-  // For generated email: send to all (no BCC, per your manual preference)
-  // (kept consistent so users see everyone in To)
   if (gmail){
     const link =
       `https://mail.google.com/mail/?view=cm&fs=1` +
@@ -619,7 +698,6 @@ function openEmailToAll(){
 function toggleManualMenu(){
   const ok = validate();
   if (!ok) {
-    // show warnings via validate(); also small alert for clarity
     const s = STRINGS[getLang()];
     alert(s.needForm);
     return;
@@ -629,25 +707,25 @@ function toggleManualMenu(){
 
 function setupManualButtons(){
   document.getElementById("copySubjectBtn").addEventListener("click", async ()=>{
-  const ok = await copyText(SUBJECT);
-  if(ok) trackEvent("copy_subject");
-});
+    const ok = await copyText(SUBJECT);
+    if(ok) trackEvent("copy_subject");
+  });
 
-document.getElementById("copyToBtn").addEventListener("click", async ()=>{
-  const ok = await copyText(TO_ALL);
-  if(ok) trackEvent("copy_to");
-});
+  document.getElementById("copyToBtn").addEventListener("click", async ()=>{
+    const ok = await copyText(TO_ALL);
+    if(ok) trackEvent("copy_to");
+  });
 
-document.getElementById("copyBodyBtn").addEventListener("click", async ()=>{
-  const ok = await copyText(buildBodyEnglish());
-  if(ok) trackEvent("copy_body");
-});
-
+  document.getElementById("copyBodyBtn").addEventListener("click", async ()=>{
+    const ok = await copyText(buildBodyEnglish());
+    if(ok) trackEvent("copy_body");
+  });
 }
 
 /* =========================================================
    LOGGING
 ========================================================= */
+
 const anonIdKey = "mdusd_anon_id_v1";
 function getAnonId(){
   let id = localStorage.getItem(anonIdKey);
@@ -671,30 +749,24 @@ async function trackEvent(action){
   try{
     fetch(TRACK_URL, {
       method: "POST",
-      // NO headers -> evita preflight
-      body: JSON.stringify(payload) // se envía como text/plain por defecto
+      body: JSON.stringify(payload) // text/plain by default (no preflight)
     });
   }catch(e){
     // ignore
   }
 }
 
-
-
 /* =========================================================
    INIT
 ========================================================= */
 
 (function init(){
-  // Restore saved name
   const savedName = (localStorage.getItem(nameKey) || "").trim();
   if (savedName) document.getElementById("senderName").value = savedName;
 
-  // Set initial language
   document.getElementById("lang").value = getLang();
   applyLanguage();
 
-  // Events
   document.getElementById("lang").addEventListener("change", (e)=>{
     setLang(e.target.value);
     applyLanguage();
@@ -720,9 +792,10 @@ async function trackEvent(action){
   });
 
   setupManualButtons();
-
-  // Initial validation
   validate();
+
+  // Load counter once on page load
+  refreshCounter();
 })();
 </script>
 </body>
