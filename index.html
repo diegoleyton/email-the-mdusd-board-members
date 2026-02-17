@@ -16,6 +16,7 @@
   --dangerBorder:#fecaca;
   --dangerBg:#fff1f2;
   --dangerText:#7f1d1d;
+  --hintBg:#eff6ff;
 }
 
 *{ box-sizing:border-box; }
@@ -58,13 +59,6 @@ body{
   font-size:22px;
   margin:0;
   text-align:left;
-}
-
-.subtitle{
-  color:var(--muted);
-  font-size:14px;
-  margin-bottom:16px;
-  line-height:1.5;
 }
 
 .card{
@@ -113,6 +107,24 @@ input:focus, select:focus{
 .warning.show{display:block;}
 
 .needsField{ border-color:#fca5a5 !important; }
+
+.hint{
+  margin-top:8px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--hintBg);
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+}
+
+.subtitle{
+  margin-top:12px;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.5;
+}
 
 .gmailToggle{
   margin-top:14px;
@@ -177,15 +189,21 @@ input:focus, select:focus{
       <h2 class="title" id="pageTitle">Email the MDUSD Board Members</h2>
     </div>
 
-    <div class="subtitle" id="subtitle"></div>
-
-    <div class="card">
-
-      <label id="lblLang">Language / Idioma</label>
+    <!-- Language selector FIRST thing after title -->
+    <div class="card" style="margin-bottom:12px;">
+      <label id="lblLang">Language/Idioma</label>
       <select id="lang">
         <option value="en">English</option>
         <option value="es">Español</option>
       </select>
+
+      <!-- Tooltip / hint BELOW language selector -->
+      <div class="hint" id="langHint"></div>
+    </div>
+
+    <div class="subtitle" id="subtitle"></div>
+
+    <div class="card">
 
       <label id="lblName">Your Name</label>
       <input id="senderName" placeholder="Your name" autocomplete="name">
@@ -205,7 +223,7 @@ input:focus, select:focus{
       </div>
 
       <div class="sendWrap">
-        <button class="sendBtn" id="sendBtn" disabled>Send</button>
+        <button class="sendBtn" id="sendBtn" disabled>Generar Mensaje</button>
       </div>
 
       <div class="helper" id="helperText"></div>
@@ -216,7 +234,7 @@ input:focus, select:focus{
 
 <script>
 /* =========================================================
-   EMAIL CONTENT (ALWAYS IN ENGLISH, regardless of UI language)
+   EMAIL CONTENT (ALWAYS IN ENGLISH)
 ========================================================= */
 
 const SUBJECT = "Please Pause the Phase-Out of Spanish Dual Immersion at Bancroft";
@@ -243,7 +261,6 @@ Thank you for your time, service to our district, and for ensuring that decision
 
 /* =========================================================
    RECIPIENTS (single email to everyone)
-   Recommended: To = Superintendent, BCC = rest
 ========================================================= */
 
 const MEMBERS = [
@@ -262,15 +279,14 @@ const TO_EMAIL = "clarka@mdusd.org";
 const BCC_EMAILS = MEMBERS.map(m => m[1]).filter(e => e !== TO_EMAIL);
 
 /* =========================================================
-   UI LANGUAGE STRINGS (changes the whole form)
+   UI LANGUAGE STRINGS (form changes; email stays English)
 ========================================================= */
 
 const STRINGS = {
   en: {
     pageTitle: "Email the MDUSD Board Members",
-    subtitle: `<b>English:</b> Enter your name and connection, then click send to open one email addressed to the Board.<br>
-              <span style="opacity:.7">The email text is in English.</span>`,
-    lblLang: "Language",
+    subtitle: `<b>English:</b> Fill out the form, then click <b>Generate Message</b> to open your email with a prepared draft addressed to the Board. Please review it and send it.`,
+    langHint: `Note: The email message will always be generated in <b>English</b>.`,
     lblName: "Your Name",
     namePh: "Your name",
     nameWarn: "<b>English:</b> Please enter your name.",
@@ -282,38 +298,32 @@ const STRINGS = {
       ["Community Member", "Community Member"],
       ["Alumni", "Alumni"],
       ["Resident", "Resident"],
-      ["Staff", "Staff"],
-      ["Student", "Student"],
-      ["Other", "Other"]
+      ["Family", "Family"]
     ],
     gmailToggleText: "Use Gmail website instead of your email app",
-    sendBtn: "Send email to all",
-    helper: `<b>Tip:</b> The email will open pre-filled. Please review and press Send.`
+    sendBtn: "Generate Message",
+    helper: `<b>Tip:</b> A draft email will open pre-filled. Please review, then press Send.`
   },
   es: {
     pageTitle: "Enviar correo al Board de MDUSD",
-    subtitle: `<b>Español:</b> Escriba su nombre y su relación con MDUSD, luego presione Enviar para abrir un solo correo dirigido al Board.<br>
-              <span style="opacity:.7">El texto del correo se enviará en inglés.</span>`,
-    lblLang: "Idioma",
+    subtitle: `<b>Español:</b> Complete el formulario y luego presione <b>Generar Mensaje</b> para abrir su correo con un borrador listo dirigido al Board. Por favor revisar y enviar`,
+    langHint: `Nota: El mensaje del correo siempre se generará en <b>inglés</b>.`,
     lblName: "Su Nombre",
     namePh: "Su nombre",
     nameWarn: "<b>Español:</b> Por favor escriba su nombre.",
     lblConn: "Su Relación con MDUSD",
     connWarn: "<b>Español:</b> Por favor seleccione su relación con MDUSD.",
     connPlaceholder: "Seleccione una",
-    // Labels in Spanish, values normalized (English) for the email signature
     connOptions: [
       ["Padre o Madre", "Parent"],
       ["Miembro de la comunidad", "Community Member"],
       ["Exalumno(a)", "Alumni"],
       ["Residente", "Resident"],
-      ["Personal del distrito", "Staff"],
-      ["Estudiante", "Student"],
-      ["Otro", "Other"]
+      ["Familiar", "Family"],
     ],
     gmailToggleText: "Usar el sitio web de Gmail en vez de su aplicación de email",
-    sendBtn: "Enviar a todos",
-    helper: `<b>Consejo:</b> El correo se abrirá listo. Revíselo y presione Enviar.`
+    sendBtn: "Generar Mensaje",
+    helper: `<b>Consejo:</b> Se abrirá un borrador listo. Revíselo y luego presione Enviar.`
   }
 };
 
@@ -321,21 +331,17 @@ const nameKey = "mdusd_senderName_v1";
 const langKey = "mdusd_lang_v1";
 
 /* =========================================================
-   LANGUAGE + STATE HELPERS
+   HELPERS
 ========================================================= */
 
-function getLang(){
-  return localStorage.getItem(langKey) || "en";
-}
-function setLang(v){
-  localStorage.setItem(langKey, v);
-}
+function getLang(){ return localStorage.getItem(langKey) || "en"; }
+function setLang(v){ localStorage.setItem(langKey, v); }
 
 function getSenderName(){
   return (document.getElementById("senderName").value || "").trim();
 }
 function getConnectionValue(){
-  return (document.getElementById("connection").value || "").trim(); // normalized value
+  return (document.getElementById("connection").value || "").trim(); // normalized value (EN)
 }
 
 function setWarning(elId, show){
@@ -357,7 +363,10 @@ function applyLanguage(){
   document.getElementById("pageTitle").textContent = s.pageTitle;
   document.getElementById("subtitle").innerHTML = s.subtitle;
 
-  document.getElementById("lblLang").textContent = s.lblLang;
+  // language label is fixed requested: "Language/Idioma"
+  document.getElementById("lblLang").textContent = "Language/Idioma";
+  document.getElementById("langHint").innerHTML = s.langHint;
+
   document.getElementById("lblName").textContent = s.lblName;
   document.getElementById("senderName").placeholder = s.namePh;
   document.getElementById("nameWarning").innerHTML = s.nameWarn;
@@ -369,7 +378,7 @@ function applyLanguage(){
   document.getElementById("sendBtn").textContent = s.sendBtn;
   document.getElementById("helperText").innerHTML = s.helper;
 
-  // Rebuild connection select, preserving currently-selected value if possible
+  // rebuild connection select preserving selection
   const current = getConnectionValue();
   const sel = document.getElementById("connection");
   sel.innerHTML = "";
@@ -381,12 +390,11 @@ function applyLanguage(){
 
   s.connOptions.forEach(([label, value])=>{
     const o = document.createElement("option");
-    o.value = value;       // normalized (English)
-    o.textContent = label; // UI label language
+    o.value = value;       // normalized (EN) used in email signature
+    o.textContent = label; // displayed in UI language
     sel.appendChild(o);
   });
 
-  // Restore selection if any
   if (current) sel.value = current;
 }
 
@@ -414,7 +422,7 @@ function validate(){
 
 function buildBodyEnglish(){
   const sender = getSenderName();
-  const connectionNormalized = getConnectionValue(); // "Parent", "Resident", etc (EN)
+  const connectionNormalized = getConnectionValue(); // EN
 
   return `${BASE}
 
