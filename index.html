@@ -282,6 +282,12 @@ input:focus, select:focus{
     <div class="titleBlock">
       <img class="titleLogo" src="logo2.png" alt="logo">
       <h2 class="title" id="pageTitle">Email the MDUSD Board Members</h2>
+      <!-- Counter shown near the top -->
+      <div class="counterPill" id="counterPill" style="display:none;">
+        <span class="counterDot" aria-hidden="true"></span>
+        <span id="counterLabel"></span>
+        <span class="counterNumber" id="counterValue">—</span>
+      </div>
     </div>
 
     <!-- Language selector FIRST thing after title -->
@@ -293,13 +299,6 @@ input:focus, select:focus{
       </select>
 
       <div class="hint" id="langHint"></div>
-
-      <!-- Counter shown near the top -->
-      <div class="counterPill" id="counterPill" style="display:none;">
-        <span class="counterDot" aria-hidden="true"></span>
-        <span id="counterLabel"></span>
-        <span class="counterNumber" id="counterValue">—</span>
-      </div>
     </div>
 
     <div class="subtitle" id="subtitle"></div>
