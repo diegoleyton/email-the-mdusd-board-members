@@ -177,6 +177,73 @@ input:focus, select:focus{
   color:var(--muted);
   line-height:1.4;
 }
+
+/* Manual menu */
+.manualLink{
+  margin-top:12px;
+  font-size:13px;
+  color:var(--blue);
+  font-weight:700;
+  cursor:pointer;
+  user-select:none;
+  display:inline-flex;
+  gap:6px;
+  align-items:center;
+}
+.manualLink.disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.manualMenu{
+  display:none;
+  margin-top:10px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#fff;
+  padding:12px;
+}
+.manualMenu.show{ display:block; }
+
+.manualTitle{
+  font-size:13px;
+  color:var(--muted);
+  margin:0 0 10px 0;
+  line-height:1.35;
+}
+
+.copyGrid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+
+@media(min-width:640px){
+  .copyGrid{ grid-template-columns:1fr 1fr 1fr; }
+}
+
+.copyBtn{
+  padding:12px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:#f8fbff;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:800;
+  color:var(--text);
+  transition:.15s;
+}
+.copyBtn:hover{ filter:brightness(.98); }
+.copyBtn:active{ transform:translateY(1px); }
+
+.copied{
+  margin-top:10px;
+  font-size:12px;
+  color:#16a34a;
+  font-weight:800;
+  display:none;
+}
+.copied.show{ display:block; }
 </style>
 </head>
 
@@ -197,7 +264,6 @@ input:focus, select:focus{
         <option value="es">Español</option>
       </select>
 
-      <!-- Tooltip / hint BELOW language selector -->
       <div class="hint" id="langHint"></div>
     </div>
 
@@ -207,12 +273,10 @@ input:focus, select:focus{
 
       <label id="lblName">Your Name</label>
       <input id="senderName" placeholder="Your name" autocomplete="name">
-
       <div class="warning" id="nameWarning"></div>
 
       <label id="lblConn">Your Connection to MDUSD</label>
       <select id="connection"></select>
-
       <div class="warning" id="connectionWarning"></div>
 
       <div class="gmailToggle" id="gmailToggle">
@@ -227,6 +291,24 @@ input:focus, select:focus{
       </div>
 
       <div class="helper" id="helperText"></div>
+
+      <!-- Manual toggle link -->
+      <div class="manualLink" id="manualToggle" role="button" tabindex="0">
+        <span id="manualToggleText">Create manually</span> <span aria-hidden="true">▾</span>
+      </div>
+
+      <!-- Hidden manual menu -->
+      <div class="manualMenu" id="manualMenu">
+        <p class="manualTitle" id="manualTitle"></p>
+
+        <div class="copyGrid">
+          <button class="copyBtn" id="copySubjectBtn"></button>
+          <button class="copyBtn" id="copyToBtn"></button>
+          <button class="copyBtn" id="copyBodyBtn"></button>
+        </div>
+
+        <div class="copied" id="copiedToast">Copied ✓</div>
+      </div>
 
     </div>
   </div>
@@ -260,7 +342,8 @@ A pause is not a rejection of change — it is a commitment to thoughtful govern
 Thank you for your time, service to our district, and for ensuring that decisions impacting children are made with care and transparency.`;
 
 /* =========================================================
-   RECIPIENTS (single email to everyone)
+   RECIPIENTS
+   Manual copy: ALL addresses together, no BCC (as requested)
 ========================================================= */
 
 const MEMBERS = [
@@ -275,8 +358,7 @@ const MEMBERS = [
   ["Kathryn Fireman","firemank@mdusd.org"]
 ];
 
-const TO_EMAIL = "clarka@mdusd.org";
-const BCC_EMAILS = MEMBERS.map(m => m[1]).filter(e => e !== TO_EMAIL);
+const TO_ALL = MEMBERS.map(m => m[1]).join(",");
 
 /* =========================================================
    UI LANGUAGE STRINGS (form changes; email stays English)
@@ -290,8 +372,8 @@ const STRINGS = {
     lblName: "Your Name",
     namePh: "Your name",
     nameWarn: "<b>English:</b> Please enter your name.",
-    lblConn: "Your Connection to Bancroft",
-    connWarn: "<b>English:</b> Please select your connection to Bancroft.",
+    lblConn: "Your Connection to MDUSD",
+    connWarn: "<b>English:</b> Please select your connection to MDUSD.",
     connPlaceholder: "Select one",
     connOptions: [
       ["Parent", "Parent"],
@@ -302,28 +384,42 @@ const STRINGS = {
     ],
     gmailToggleText: "Use Gmail website instead of your email app",
     sendBtn: "Generate Message",
-    helper: `<b>Tip:</b> A draft email will open pre-filled. Please review, then press Send.`
+    helper: `<b>Tip:</b> A draft email will open pre-filled. Please review, then press Send.`,
+    manualToggleText: "Create manually",
+    manualTitle: "If you prefer to compose the email manually, use these buttons to copy the subject, recipients, and message.",
+    copySubject: "Copy subject",
+    copyTo: "Copy recipients",
+    copyBody: "Copy message",
+    copied: "Copied ✓",
+    needForm: "Please fill out the form first."
   },
   es: {
     pageTitle: "Enviar correo al Board de MDUSD",
-    subtitle: `Complete el formulario y luego presione <b>Generar Mensaje</b> para abrir su correo con un borrador listo dirigido al Board. Por favor revisar y enviar`,
+    subtitle: `Complete el formulario y luego presione <b>Generar Mensaje</b> para abrir su correo con un borrador listo dirigido al Board. Por favor revise y envíe.`,
     langHint: `Nota: El mensaje del correo siempre se generará en <b>inglés</b>.`,
     lblName: "Su Nombre",
     namePh: "Su nombre",
     nameWarn: "<b>Español:</b> Por favor escriba su nombre.",
-    lblConn: "Su Relación con Bancroft",
-    connWarn: "<b>Español:</b> Por favor seleccione su relación con Bancroft.",
+    lblConn: "Su Relación con MDUSD",
+    connWarn: "<b>Español:</b> Por favor seleccione su relación con MDUSD.",
     connPlaceholder: "Seleccione una",
     connOptions: [
       ["Padre o Madre", "Parent"],
       ["Miembro de la comunidad", "Community Member"],
       ["Exalumno(a)", "Alumni"],
       ["Residente", "Resident"],
-      ["Familiar", "Family Member"],
+      ["Familiar", "Family Member"]
     ],
     gmailToggleText: "Usar el sitio web de Gmail en vez de su aplicación de email",
     sendBtn: "Generar Mensaje",
-    helper: `<b>Consejo:</b> Se abrirá un borrador listo. Revíselo y luego presione Enviar.`
+    helper: `<b>Consejo:</b> Se abrirá un borrador listo. Revíselo y luego presione Enviar.`,
+    manualToggleText: "Crear manualmente",
+    manualTitle: "Si prefiere redactar el correo manualmente, use estos botones para copiar el asunto, los destinatarios y el mensaje.",
+    copySubject: "Copiar asunto",
+    copyTo: "Copiar destinatarios",
+    copyBody: "Copiar mensaje",
+    copied: "Copiado ✓",
+    needForm: "Primero complete el formulario."
   }
 };
 
@@ -355,6 +451,41 @@ function setNeedsField(fieldId, needs){
   el.classList.toggle("needsField", !!needs);
 }
 
+function showCopiedToast(){
+  const t = document.getElementById("copiedToast");
+  const s = STRINGS[getLang()];
+  t.textContent = s.copied;
+  t.classList.add("show");
+  clearTimeout(showCopiedToast._timer);
+  showCopiedToast._timer = setTimeout(()=>t.classList.remove("show"), 1400);
+}
+
+async function copyText(text){
+  // modern clipboard (requires https or localhost)
+  try{
+    await navigator.clipboard.writeText(text);
+    showCopiedToast();
+    return true;
+  }catch(err){
+    // fallback for older browsers / non-https
+    try{
+      const ta=document.createElement("textarea");
+      ta.value=text;
+      ta.setAttribute("readonly","");
+      ta.style.position="fixed";
+      ta.style.top="-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      showCopiedToast();
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+}
+
 function applyLanguage(){
   const lang = getLang();
   const s = STRINGS[lang];
@@ -363,7 +494,6 @@ function applyLanguage(){
   document.getElementById("pageTitle").textContent = s.pageTitle;
   document.getElementById("subtitle").innerHTML = s.subtitle;
 
-  // language label is fixed requested: "Language/Idioma"
   document.getElementById("lblLang").textContent = "Language/Idioma";
   document.getElementById("langHint").innerHTML = s.langHint;
 
@@ -377,6 +507,13 @@ function applyLanguage(){
   document.getElementById("gmailToggleText").textContent = s.gmailToggleText;
   document.getElementById("sendBtn").textContent = s.sendBtn;
   document.getElementById("helperText").innerHTML = s.helper;
+
+  document.getElementById("manualToggleText").textContent = s.manualToggleText;
+  document.getElementById("manualTitle").textContent = s.manualTitle;
+
+  document.getElementById("copySubjectBtn").textContent = s.copySubject;
+  document.getElementById("copyToBtn").textContent = s.copyTo;
+  document.getElementById("copyBodyBtn").textContent = s.copyBody;
 
   // rebuild connection select preserving selection
   const current = getConnectionValue();
@@ -399,12 +536,23 @@ function applyLanguage(){
 }
 
 /* =========================================================
-   VALIDATION
+   VALIDATION + MANUAL MENU GATE
 ========================================================= */
+
+function setManualEnabled(enabled){
+  const link = document.getElementById("manualToggle");
+  link.classList.toggle("disabled", !enabled);
+  link.setAttribute("aria-disabled", enabled ? "false" : "true");
+  link.tabIndex = enabled ? 0 : -1;
+
+  // if becomes disabled, hide menu
+  if (!enabled) document.getElementById("manualMenu").classList.remove("show");
+}
 
 function validate(){
   const nameOk = getSenderName().length > 0;
   const connOk = getConnectionValue().length > 0;
+  const ok = nameOk && connOk;
 
   setWarning("nameWarning", !nameOk);
   setNeedsField("senderName", !nameOk);
@@ -412,8 +560,10 @@ function validate(){
   setWarning("connectionWarning", !connOk);
   setNeedsField("connection", !connOk);
 
-  document.getElementById("sendBtn").disabled = !(nameOk && connOk);
-  return nameOk && connOk;
+  document.getElementById("sendBtn").disabled = !ok;
+  setManualEnabled(ok);
+
+  return ok;
 }
 
 /* =========================================================
@@ -427,7 +577,9 @@ function buildBodyEnglish(){
   return `${BASE}
 
 Sincerely,
+
 ${sender}
+
 ${connectionNormalized}`;
 }
 
@@ -437,11 +589,12 @@ function openEmailToAll(){
   const gmail = document.getElementById("gmailCheck").checked;
   const body = buildBodyEnglish();
 
+  // For generated email: send to all (no BCC, per your manual preference)
+  // (kept consistent so users see everyone in To)
   if (gmail){
     const link =
       `https://mail.google.com/mail/?view=cm&fs=1` +
-      `&to=${encodeURIComponent(TO_EMAIL)}` +
-      `&bcc=${encodeURIComponent(BCC_EMAILS.join(","))}` +
+      `&to=${encodeURIComponent(TO_ALL)}` +
       `&su=${encodeURIComponent(SUBJECT)}` +
       `&body=${encodeURIComponent(body)}`;
 
@@ -450,12 +603,40 @@ function openEmailToAll(){
   }
 
   const link =
-    `mailto:${encodeURIComponent(TO_EMAIL)}` +
-    `?bcc=${encodeURIComponent(BCC_EMAILS.join(","))}` +
-    `&subject=${encodeURIComponent(SUBJECT)}` +
+    `mailto:${encodeURIComponent(TO_ALL)}` +
+    `?subject=${encodeURIComponent(SUBJECT)}` +
     `&body=${encodeURIComponent(body)}`;
 
   window.location.href = link;
+}
+
+/* =========================================================
+   MANUAL MENU BEHAVIOR
+========================================================= */
+
+function toggleManualMenu(){
+  const ok = validate();
+  if (!ok) {
+    // show warnings via validate(); also small alert for clarity
+    const s = STRINGS[getLang()];
+    alert(s.needForm);
+    return;
+  }
+  document.getElementById("manualMenu").classList.toggle("show");
+}
+
+function setupManualButtons(){
+  document.getElementById("copySubjectBtn").addEventListener("click", ()=>{
+    copyText(SUBJECT);
+  });
+
+  document.getElementById("copyToBtn").addEventListener("click", ()=>{
+    copyText(TO_ALL);
+  });
+
+  document.getElementById("copyBodyBtn").addEventListener("click", ()=>{
+    copyText(buildBodyEnglish());
+  });
 }
 
 /* =========================================================
@@ -486,6 +667,17 @@ function openEmailToAll(){
   document.getElementById("connection").addEventListener("change", validate);
 
   document.getElementById("sendBtn").addEventListener("click", openEmailToAll);
+
+  const manualToggle = document.getElementById("manualToggle");
+  manualToggle.addEventListener("click", toggleManualMenu);
+  manualToggle.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggleManualMenu();
+    }
+  });
+
+  setupManualButtons();
 
   // Initial validation
   validate();
