@@ -299,7 +299,6 @@ input:focus, select:focus{
         <span class="counterDot" aria-hidden="true"></span>
         <span id="counterLabel"></span>
         <span class="counterNumber" id="counterValue">—</span>
-        <span class="counterSub" id="counterSuffix"></span>
       </div>
     </div>
 
@@ -428,8 +427,7 @@ const STRINGS = {
     copyBody: "Copy message",
     copied: "Copied ✓",
     needForm: "Please fill out the form first.",
-    counterLabel: "Participants:",
-    counterSuffix: "(unique)"
+    counterLabel: "Recorded participants:"
   },
   es: {
     pageTitle: "Enviar correo al Board de MDUSD",
@@ -459,8 +457,7 @@ const STRINGS = {
     copyBody: "Copiar mensaje",
     copied: "Copiado ✓",
     needForm: "Primero complete el formulario.",
-    counterLabel: "Participantes:",
-    counterSuffix: "(únicos)"
+    counterLabel: "Participación registrada:"
   }
 };
 
@@ -541,7 +538,6 @@ function applyLanguage(){
 
   // Counter labels
   document.getElementById("counterLabel").textContent = s.counterLabel;
-  document.getElementById("counterSuffix").textContent = s.counterSuffix;
 
   document.getElementById("lblName").textContent = s.lblName;
   document.getElementById("senderName").placeholder = s.namePh;
