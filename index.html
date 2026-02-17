@@ -686,6 +686,14 @@ function openEmailToAll(){
   window.location.href = link;
 }
 
+function isMobileDevice(){
+  return (
+    window.matchMedia("(max-width: 768px)").matches ||
+    navigator.maxTouchPoints > 1 ||
+    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+  );
+}
+
 /* =========================================================
    MANUAL MENU BEHAVIOR
 ========================================================= */
@@ -791,6 +799,14 @@ async function trackEvent(action){
 
   // Load counter once on page load
   refreshCounter();
+
+  // Hide Gmail toggle on mobile
+  if (isMobileDevice()){
+    document.getElementById("gmailCheck").checked = false;
+    const g = document.getElementById("gmailToggle");
+    if (g) g.style.display = "none";
+  }
+  
 })();
 </script>
 </body>
