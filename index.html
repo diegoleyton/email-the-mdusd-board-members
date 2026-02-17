@@ -9,12 +9,13 @@
 <style>
 :root{
   --bg:#f3f7ff;
-  --card:#ffffff;
   --text:#0f172a;
   --muted:#475569;
   --border:#dbeafe;
   --blue:#1d4ed8;
-  --blueSoft:#eff6ff;
+  --dangerBorder:#fecaca;
+  --dangerBg:#fff1f2;
+  --dangerText:#7f1d1d;
 }
 
 *{ box-sizing:border-box; }
@@ -46,15 +47,13 @@ body{
   margin-bottom:12px;
 }
 
-/* center ONLY logo */
 .titleLogo{
   width:240px;
   height:90px;
   object-fit:contain;
-  margin-inline:auto; /* ← centra horizontalmente */
+  margin-inline:auto;
 }
 
-/* title stays left */
 .title{
   font-size:22px;
   margin:0;
@@ -78,9 +77,11 @@ body{
 label{
   font-size:13px;
   color:var(--muted);
+  display:block;
+  margin-top:12px;
 }
 
-input{
+input, select{
   width:100%;
   padding:12px;
   margin-top:6px;
@@ -88,350 +89,401 @@ input{
   border:1px solid #c7d7ff;
   background:#f9fbff;
   font-size:16px;
-  cursor:text;
   outline:none;
 }
 
-input::placeholder{
-  color:#94a3b8;
-  opacity:1;
-}
+input::placeholder{ color:#94a3b8; opacity:1; }
 
-input:focus{
+input:focus, select:focus{
   border-color:#93c5fd;
   box-shadow:0 0 0 3px rgba(37,99,235,.14);
 }
 
-.nameWarning{
+.warning{
   display:none;
   margin-top:8px;
   padding:10px 12px;
   border-radius:12px;
-  border:1px solid #fecaca;
-  background:#fff1f2;
-  color:#7f1d1d;
+  border:1px solid var(--dangerBorder);
+  background:var(--dangerBg);
+  color:var(--dangerText);
   font-size:13px;
+  line-height:1.35;
 }
-.nameWarning.show{display:block;}
+.warning.show{display:block;}
 
-.needsName{
-  border-color:#fca5a5 !important;
-}
+.needsField{ border-color:#fca5a5 !important; }
 
 .gmailToggle{
   margin-top:14px;
   width:100%;
 }
 
-/* Make the whole row layout predictable */
 .gmailToggle label{
   display:grid;
-  grid-template-columns: 22px 1fr; /* checkbox column + text column */
+  grid-template-columns: 22px 1fr;
   align-items:start;
   column-gap:10px;
-  row-gap:0;
   cursor:pointer;
   margin:0;
   width:100%;
 }
 
-/* Keep checkbox from stretching / taking space */
 .gmailToggle input[type="checkbox"]{
   width:18px;
   height:18px;
-  margin:2px 0 0 0; /* align with first text line */
+  margin:2px 0 0 0;
   justify-self:start;
 }
 
-/* Give the text all the space */
 .gmailToggle .toggleText{
   line-height:1.25;
+  color:var(--muted);
+  font-size:13px;
 }
 
-.grid{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:10px;
-  margin-top:16px;
-}
+.sendWrap{ margin-top:16px; }
 
-@media(min-width:640px){
-  .grid{grid-template-columns:1fr 1fr;}
-}
-
-button.member{
+.sendBtn{
+  width:100%;
   padding:14px;
   border-radius:14px;
   border:1px solid var(--border);
-  background:#fff;
+  background:var(--blue);
+  color:#fff;
   cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
   font-size:16px;
+  font-weight:700;
   transition:.15s;
 }
+.sendBtn:hover{ filter:brightness(.97); }
+.sendBtn:disabled{ opacity:.55; cursor:not-allowed; }
 
-button.member:hover{ background:#f8fbff; }
-
-button.member:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-.name{
-  font-weight:600;
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.inlineCheck{
-  color:#16a34a;
-  font-weight:900;
-  display:none;
-}
-.inlineCheck.show{display:inline;}
-
-.progress{
-  margin-top:14px;
-  font-size:13px;
-  color:var(--muted);
-}
-
-.note{
-  margin-top:6px;
+.helper{
+  margin-top:10px;
   font-size:12px;
   color:var(--muted);
+  line-height:1.4;
 }
-
-.greenCheck{
-  color:#16a34a;
-  font-weight:700;
-}
-
-.resetWrap{
-  margin-top:10px;
-}
-
-.resetBtn{
-  border:1px solid var(--border);
-  background:var(--blueSoft);
-  color:var(--blue);
-  border-radius:12px;
-  padding:10px 12px;
-  font-size:13px;
-  font-weight:700;
-  cursor:pointer;
-}
-
-.resetBtn:hover{filter:brightness(.97);}
 </style>
 </head>
 
 <body>
 <div class="page">
-<div class="wrap">
+  <div class="wrap">
 
-<div class="titleBlock">
-<img class="titleLogo" src="logo2.png">
-<h2 class="title">Email the MDUSD Board Members</h2>
-</div>
+    <div class="titleBlock">
+      <img class="titleLogo" src="logo2.png" alt="logo">
+      <h2 class="title" id="pageTitle">Email the MDUSD Board Members</h2>
+    </div>
 
-<div class="subtitle">
-<b>English:</b> Enter your name, then click a name to open a prepared email. Review and send.<br>
-<span style="opacity:.7"><b>Español:</b> Escriba su nombre y luego toque un nombre para abrir un correo listo. Revíselo y envíelo.</span>
-</div>
+    <div class="subtitle" id="subtitle"></div>
 
-<div class="card">
+    <div class="card">
 
-<label>Your Name / Su Nombre</label>
-<input id="senderName" placeholder="Your name">
+      <label id="lblLang">Language / Idioma</label>
+      <select id="lang">
+        <option value="en">English</option>
+        <option value="es">Español</option>
+      </select>
 
-<div class="nameWarning" id="nameWarning">
-<b>English:</b> Please enter your name.<br>
-<span style="opacity:.7"><b>Español:</b> Por favor escriba su nombre.</span>
-</div>
+      <label id="lblName">Your Name</label>
+      <input id="senderName" placeholder="Your name" autocomplete="name">
 
-<div class="gmailToggle" id="gmailToggle">
-  <label>
-    <input type="checkbox" id="gmailCheck">
-    <span class="toggleText">Use Gmail website instead of your email app / Usar el sitio web de Gmail en vez de su aplicacion de email</span>
-  </label>
-</div>
+      <div class="warning" id="nameWarning"></div>
 
-<div class="grid" id="buttons"></div>
+      <label id="lblConn">Your Connection to MDUSD</label>
+      <select id="connection"></select>
 
-<div class="progress" id="progressText">Opened: 0 / 9</div>
+      <div class="warning" id="connectionWarning"></div>
 
-<div class="note">
-  <span class="greenCheck">✓</span>
-  <b>English:</b> Checks mean you opened the email — make sure you sent it.<br>
+      <div class="gmailToggle" id="gmailToggle">
+        <label>
+          <input type="checkbox" id="gmailCheck">
+          <span class="toggleText" id="gmailToggleText"></span>
+        </label>
+      </div>
 
-  <span style="opacity:.7">
-    <span style="color:#16a34a; font-weight:700;">✓</span>
-    <b>Español:</b> Las marcas indican que abrió el correo — asegúrese de enviarlo.
-  </span>
-</div>
+      <div class="sendWrap">
+        <button class="sendBtn" id="sendBtn" disabled>Send</button>
+      </div>
 
-<div class="resetWrap">
-<button class="resetBtn" id="resetBtn">Reset checkmarks / Reiniciar marcas</button>
-</div>
-</div>
+      <div class="helper" id="helperText"></div>
 
-</div>
-</div>
+    </div>
+  </div>
 </div>
 
 <script>
-const SUBJECT="Concern Regarding Two-Way Dual Immersion Transition";
+/* =========================================================
+   EMAIL CONTENT (ALWAYS IN ENGLISH, regardless of UI language)
+========================================================= */
 
-const BASE=`I am writing as a Bancroft Elementary community member to share my concern about the recently announced transition of the Two-Way Dual Immersion program.
+const SUBJECT = "Please Pause the Phase-Out of Spanish Dual Immersion at Bancroft";
 
-Like many families, we learned of this decision on January 28—just weeks before Kindergarten enrollment opens. This change has created significant uncertainty for our family and others as we try to plan for enrollment, childcare, and keeping siblings together.
+const BASE = `Dear Superintendent Clark and Members of the Board,
 
-I respectfully ask MDUSD to consider two specific actions:
+I am writing as a community member and signer of the petition urging the District to pause the phase-out of the Spanish Two-Way Dual Immersion (TWDI) Program at Bancroft Elementary.
 
-1. Delay the transition so families have adequate time to plan.
-2. Engage in real dialogue with the community.
+More than 400 community members have now signed in support of a pause. This level of concern reflects how deeply families value this program and how disruptive the current timeline has been.
 
-Families are asking for transparency, time, and collaboration before a decision of this magnitude is implemented.
+The January 28 announcement — just days before kindergarten enrollment opened — has left families scrambling to make decisions about sibling placement, transportation, and school stability. At the Bancroft Elementary Parent-Faculty Meeting on February 10, district representatives confirmed that the decision was made without consultation with Bancroft families and without a completed analysis of enrollment or demographic impacts.
 
-Thank you for your time and service.`;
+Regardless of where one stands on the program's long-term plans, decisions of this magnitude deserve transparent data, meaningful community engagement, and adequate time for families to plan.
 
-const MEMBERS=[
-["Debra Mason","masond@mdusd.org"],
-["Keisha Nzewi","nzewik@mdusd.org"],
-["Brian Lawrence","lawrenceb@mdusd.org"],
-["Linda Mayo","mayol@mdusd.org"],
-["Tom McDougall","mcdougallt@mdusd.org"],
-["Alan Barrera Orellana","barreraorellanaa@mdusd.org"],
-["Dr. Adam Clark","clarka@mdusd.org"],
-["Erin DeMartini","demartinie@mdusd.org"],
-["Kathryn Fireman","firemank@mdusd.org"]
+I respectfully urge the Board to:
+
+Pause implementation of the phase-out
+Share more information about the data and analysis that informed the decision
+Engage directly with Bancroft families before moving forward
+
+A pause is not a rejection of change — it is a commitment to thoughtful governance, equity, and student stability.
+
+Thank you for your time, service to our district, and for ensuring that decisions impacting children are made with care and transparency.`;
+
+/* =========================================================
+   RECIPIENTS (single email to everyone)
+   Recommended: To = Superintendent, BCC = rest
+========================================================= */
+
+const MEMBERS = [
+  ["Debra Mason","masond@mdusd.org"],
+  ["Keisha Nzewi","nzewik@mdusd.org"],
+  ["Brian Lawrence","lawrenceb@mdusd.org"],
+  ["Linda Mayo","mayol@mdusd.org"],
+  ["Tom McDougall","mcdougallt@mdusd.org"],
+  ["Alan Barrera Orellana","barreraorellanaa@mdusd.org"],
+  ["Dr. Adam Clark","clarka@mdusd.org"],
+  ["Erin DeMartini","demartinie@mdusd.org"],
+  ["Kathryn Fireman","firemank@mdusd.org"]
 ];
 
-const storeKey="progressEmails_v2";
-const nameKey="senderName_v1";
+const TO_EMAIL = "clarka@mdusd.org";
+const BCC_EMAILS = MEMBERS.map(m => m[1]).filter(e => e !== TO_EMAIL);
 
-/* ---------- storage ---------- */
+/* =========================================================
+   UI LANGUAGE STRINGS (changes the whole form)
+========================================================= */
 
-function progress(){
-return JSON.parse(localStorage.getItem(storeKey)||"{}");
+const STRINGS = {
+  en: {
+    pageTitle: "Email the MDUSD Board Members",
+    subtitle: `<b>English:</b> Enter your name and connection, then click send to open one email addressed to the Board.<br>
+              <span style="opacity:.7">The email text is in English.</span>`,
+    lblLang: "Language",
+    lblName: "Your Name",
+    namePh: "Your name",
+    nameWarn: "<b>English:</b> Please enter your name.",
+    lblConn: "Your Connection to MDUSD",
+    connWarn: "<b>English:</b> Please select your connection to MDUSD.",
+    connPlaceholder: "Select one",
+    connOptions: [
+      ["Parent", "Parent"],
+      ["Community Member", "Community Member"],
+      ["Alumni", "Alumni"],
+      ["Resident", "Resident"],
+      ["Staff", "Staff"],
+      ["Student", "Student"],
+      ["Other", "Other"]
+    ],
+    gmailToggleText: "Use Gmail website instead of your email app",
+    sendBtn: "Send email to all",
+    helper: `<b>Tip:</b> The email will open pre-filled. Please review and press Send.`
+  },
+  es: {
+    pageTitle: "Enviar correo al Board de MDUSD",
+    subtitle: `<b>Español:</b> Escriba su nombre y su relación con MDUSD, luego presione Enviar para abrir un solo correo dirigido al Board.<br>
+              <span style="opacity:.7">El texto del correo se enviará en inglés.</span>`,
+    lblLang: "Idioma",
+    lblName: "Su Nombre",
+    namePh: "Su nombre",
+    nameWarn: "<b>Español:</b> Por favor escriba su nombre.",
+    lblConn: "Su Relación con MDUSD",
+    connWarn: "<b>Español:</b> Por favor seleccione su relación con MDUSD.",
+    connPlaceholder: "Seleccione una",
+    // Labels in Spanish, values normalized (English) for the email signature
+    connOptions: [
+      ["Padre o Madre", "Parent"],
+      ["Miembro de la comunidad", "Community Member"],
+      ["Exalumno(a)", "Alumni"],
+      ["Residente", "Resident"],
+      ["Personal del distrito", "Staff"],
+      ["Estudiante", "Student"],
+      ["Otro", "Other"]
+    ],
+    gmailToggleText: "Usar el sitio web de Gmail en vez de su aplicación de email",
+    sendBtn: "Enviar a todos",
+    helper: `<b>Consejo:</b> El correo se abrirá listo. Revíselo y presione Enviar.`
+  }
+};
+
+const nameKey = "mdusd_senderName_v1";
+const langKey = "mdusd_lang_v1";
+
+/* =========================================================
+   LANGUAGE + STATE HELPERS
+========================================================= */
+
+function getLang(){
+  return localStorage.getItem(langKey) || "en";
 }
-function save(p){
-localStorage.setItem(storeKey,JSON.stringify(p));
+function setLang(v){
+  localStorage.setItem(langKey, v);
 }
-
-/* ---------- name save ---------- */
-
-function loadSavedName(){
-const saved=(localStorage.getItem(nameKey)||"").trim();
-if(saved) document.getElementById("senderName").value=saved;
-}
-function saveNameNow(){
-localStorage.setItem(nameKey,getSenderName());
-}
-
-/* ---------- UI update ---------- */
-
-function update(){
-const p=progress();
-document.getElementById("progressText").textContent=`Opened: ${Object.keys(p).length} / ${MEMBERS.length}`;
-
-MEMBERS.forEach(m=>{
-const check=document.querySelector(`[data-check="${m[1]}"]`);
-if(check){
-if(p[m[1]]) check.classList.add("show");
-else check.classList.remove("show");
-}
-});
-}
-
-/* ---------- name gate ---------- */
 
 function getSenderName(){
-return(document.getElementById("senderName").value||"").trim();
+  return (document.getElementById("senderName").value || "").trim();
+}
+function getConnectionValue(){
+  return (document.getElementById("connection").value || "").trim(); // normalized value
 }
 
-function refreshNameGate(){
-const ok=getSenderName().length>0;
-document.querySelectorAll("button.member").forEach(b=>b.disabled=!ok);
-
-if(!ok){
-document.getElementById("nameWarning").classList.add("show");
-document.getElementById("senderName").classList.add("needsName");
-}else{
-document.getElementById("nameWarning").classList.remove("show");
-document.getElementById("senderName").classList.remove("needsName");
+function setWarning(elId, show){
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.classList.toggle("show", !!show);
 }
+function setNeedsField(fieldId, needs){
+  const el = document.getElementById(fieldId);
+  if (!el) return;
+  el.classList.toggle("needsField", !!needs);
 }
 
-/* ---------- email ---------- */
+function applyLanguage(){
+  const lang = getLang();
+  const s = STRINGS[lang];
 
-function openEmail(email,name){
-const sender=getSenderName();
-if(!sender){refreshNameGate();return;}
+  document.documentElement.lang = lang;
+  document.getElementById("pageTitle").textContent = s.pageTitle;
+  document.getElementById("subtitle").innerHTML = s.subtitle;
 
-const body=`Dear ${name},
+  document.getElementById("lblLang").textContent = s.lblLang;
+  document.getElementById("lblName").textContent = s.lblName;
+  document.getElementById("senderName").placeholder = s.namePh;
+  document.getElementById("nameWarning").innerHTML = s.nameWarn;
 
-${BASE}
+  document.getElementById("lblConn").textContent = s.lblConn;
+  document.getElementById("connectionWarning").innerHTML = s.connWarn;
+
+  document.getElementById("gmailToggleText").textContent = s.gmailToggleText;
+  document.getElementById("sendBtn").textContent = s.sendBtn;
+  document.getElementById("helperText").innerHTML = s.helper;
+
+  // Rebuild connection select, preserving currently-selected value if possible
+  const current = getConnectionValue();
+  const sel = document.getElementById("connection");
+  sel.innerHTML = "";
+
+  const ph = document.createElement("option");
+  ph.value = "";
+  ph.textContent = s.connPlaceholder;
+  sel.appendChild(ph);
+
+  s.connOptions.forEach(([label, value])=>{
+    const o = document.createElement("option");
+    o.value = value;       // normalized (English)
+    o.textContent = label; // UI label language
+    sel.appendChild(o);
+  });
+
+  // Restore selection if any
+  if (current) sel.value = current;
+}
+
+/* =========================================================
+   VALIDATION
+========================================================= */
+
+function validate(){
+  const nameOk = getSenderName().length > 0;
+  const connOk = getConnectionValue().length > 0;
+
+  setWarning("nameWarning", !nameOk);
+  setNeedsField("senderName", !nameOk);
+
+  setWarning("connectionWarning", !connOk);
+  setNeedsField("connection", !connOk);
+
+  document.getElementById("sendBtn").disabled = !(nameOk && connOk);
+  return nameOk && connOk;
+}
+
+/* =========================================================
+   EMAIL (ALWAYS ENGLISH)
+========================================================= */
+
+function buildBodyEnglish(){
+  const sender = getSenderName();
+  const connectionNormalized = getConnectionValue(); // "Parent", "Resident", etc (EN)
+
+  return `${BASE}
 
 Sincerely,
 
-${sender}`;
+${sender}
 
-const gmail=document.getElementById("gmailCheck").checked;
-
-const link=gmail
-?`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(body)}`
-:`mailto:${email}?subject=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(body)}`;
-
-const p=progress();
-p[email]=true;
-save(p);
-update();
-
-if(gmail) window.open(link,"_blank");
-else window.location.href=link;
+${connectionNormalized}`;
 }
 
-/* ---------- reset ---------- */
+function openEmailToAll(){
+  if (!validate()) return;
 
-document.addEventListener("click",e=>{
-if(e.target.id==="resetBtn"){
-if(confirm("Reset checkmarks? / ¿Reiniciar marcas?")){
-localStorage.removeItem(storeKey);
-update();
-}
-}
-});
+  const gmail = document.getElementById("gmailCheck").checked;
+  const body = buildBodyEnglish();
 
-/* ---------- render ---------- */
+  if (gmail){
+    const link =
+      `https://mail.google.com/mail/?view=cm&fs=1` +
+      `&to=${encodeURIComponent(TO_EMAIL)}` +
+      `&bcc=${encodeURIComponent(BCC_EMAILS.join(","))}` +
+      `&su=${encodeURIComponent(SUBJECT)}` +
+      `&body=${encodeURIComponent(body)}`;
 
-function render(){
-loadSavedName();
+    window.open(link, "_blank");
+    return;
+  }
 
-const c=document.getElementById("buttons");
+  const link =
+    `mailto:${encodeURIComponent(TO_EMAIL)}` +
+    `?bcc=${encodeURIComponent(BCC_EMAILS.join(","))}` +
+    `&subject=${encodeURIComponent(SUBJECT)}` +
+    `&body=${encodeURIComponent(body)}`;
 
-MEMBERS.forEach(m=>{
-const b=document.createElement("button");
-b.className="member";
-b.innerHTML=`
-<span class="name">${m[0]}<span class="inlineCheck" data-check="${m[1]}">✓</span></span>
-`;
-b.onclick=()=>openEmail(m[1],m[0]);
-c.appendChild(b);
-});
-
-update();
-refreshNameGate();
-
-const input=document.getElementById("senderName");
-input.addEventListener("input",()=>{saveNameNow();refreshNameGate();});
+  window.location.href = link;
 }
 
-render();
+/* =========================================================
+   INIT
+========================================================= */
+
+(function init(){
+  // Restore saved name
+  const savedName = (localStorage.getItem(nameKey) || "").trim();
+  if (savedName) document.getElementById("senderName").value = savedName;
+
+  // Set initial language
+  document.getElementById("lang").value = getLang();
+  applyLanguage();
+
+  // Events
+  document.getElementById("lang").addEventListener("change", (e)=>{
+    setLang(e.target.value);
+    applyLanguage();
+    validate();
+  });
+
+  document.getElementById("senderName").addEventListener("input", ()=>{
+    localStorage.setItem(nameKey, getSenderName());
+    validate();
+  });
+
+  document.getElementById("connection").addEventListener("change", validate);
+
+  document.getElementById("sendBtn").addEventListener("click", openEmailToAll);
+
+  // Initial validation
+  validate();
+})();
 </script>
 </body>
 </html>
