@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email the MDUSD Board Members</title>
+<link rel="icon" type="image/png" href="logo.png">
+
+<style>
+:root{
+  --bg:#f3f7ff;
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#dbeafe;
+  --blue:#1d4ed8;
+  --dangerBorder:#fecaca;
+  --dangerBg:#fff1f2;
+  --dangerText:#7f1d1d;
+  --hintBg:#eff6ff;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  font-family:system-ui,sans-serif;
+  background:#fff;
+  color:var(--text);
+}
+
+.page{
+  max-width:920px;
+  margin:auto;
+  padding:18px;
+}
+
+.wrap{
+  background:var(--bg);
+  padding:18px;
+  border-radius:16px;
+  border:1px solid var(--border);
+}
+
+.titleBlock{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.titleLogo{
+  width:240px;
+  height:90px;
+  object-fit:contain;
+  margin-inline:auto;
+}
+
+.title{
+  font-size:22px;
+  margin:0;
+  text-align:left;
+}
+
+.card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+}
+
+label{
+  font-size:13px;
+  color:var(--muted);
+  display:block;
+  margin-top:12px;
+}
+
+input, select{
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  border-radius:12px;
+  border:1px solid #c7d7ff;
+  background:#f9fbff;
+  font-size:16px;
+  outline:none;
+}
+
+input::placeholder{ color:#94a3b8; opacity:1; }
+
+input:focus, select:focus{
+  border-color:#93c5fd;
+  box-shadow:0 0 0 3px rgba(37,99,235,.14);
+}
+
+.warning{
+  display:none;
+  margin-top:8px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--dangerBorder);
+  background:var(--dangerBg);
+  color:var(--dangerText);
+  font-size:13px;
+  line-height:1.35;
+}
+.warning.show{display:block;}
+
+.needsField{ border-color:#fca5a5 !important; }
+
+.hint{
+  margin-top:8px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--hintBg);
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+}
+
+.subtitle{
+  margin-top:12px;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.5;
+}
+
+.gmailToggle{
+  margin-top:14px;
+  width:100%;
+}
+
+.gmailToggle label{
+  display:grid;
+  grid-template-columns: 22px 1fr;
+  align-items:start;
+  column-gap:10px;
+  cursor:pointer;
+  margin:0;
+  width:100%;
+}
+
+.gmailToggle input[type="checkbox"]{
+  width:18px;
+  height:18px;
+  margin:2px 0 0 0;
+  justify-self:start;
+}
+
+.gmailToggle .toggleText{
+  line-height:1.25;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.sendWrap{ margin-top:16px; }
+
+.sendBtn{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background:var(--blue);
+  color:#fff;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:700;
+  transition:.15s;
+}
+.sendBtn:hover{ filter:brightness(.97); }
+.sendBtn:disabled{ opacity:.55; cursor:not-allowed; }
+
+.helper{
+  margin-top:10px;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.4;
+}
+
+/* Manual menu */
+.manualLink{
+  margin-top:12px;
+  font-size:13px;
+  color:var(--blue);
+  font-weight:700;
+  cursor:pointer;
+  user-select:none;
+  display:inline-flex;
+  gap:6px;
+  align-items:center;
+}
+.manualLink.disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.manualMenu{
+  display:none;
+  margin-top:10px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#fff;
+  padding:12px;
+}
+.manualMenu.show{ display:block; }
+
+.manualTitle{
+  font-size:13px;
+  color:var(--muted);
+  margin:0 0 10px 0;
+  line-height:1.35;
+}
+
+.copyGrid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+
+@media(min-width:640px){
+  .copyGrid{ grid-template-columns:1fr 1fr 1fr; }
+}
+
+.copyBtn{
+  padding:12px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:#f8fbff;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:800;
+  color:var(--text);
+  transition:.15s;
+}
+.copyBtn:hover{ filter:brightness(.98); }
+.copyBtn:active{ transform:translateY(1px); }
+
+.copied{
+  margin-top:10px;
+  font-size:12px;
+  color:#16a34a;
+  font-weight:800;
+  display:none;
+}
+.copied.show{ display:block; }
+
+/* Counter pill */
+.counterPill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:12px;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:#fff;
+  font-size:13px;
+  color:var(--muted);
+}
+.counterNumber{
+  font-weight:900;
+  color:var(--text);
+}
+.counterDot{
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:#16a34a;
+  display:inline-block;
+}
+.counterSub{
+  opacity:.85;
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+  <div class="wrap">
+
+    <div class="titleBlock">
+      <img class="titleLogo" src="logo2.png" alt="logo">
+      <h2 class="title" id="pageTitle">Email the MDUSD Board Members</h2>
+      <!-- Counter shown near the top -->
+      <div class="counterPill" id="counterPill" style="display:none;">
+        <span class="counterDot" aria-hidden="true"></span>
+        <span id="counterLabel"></span>
+        <span class="counterNumber" id="counterValue">—</span>
+      </div>
+    </div>
+
+    <!-- Language selector FIRST thing after title -->
+    <div class="card" style="margin-bottom:12px;">
+      <label id="lblLang">Language/Idioma</label>
+      <select id="lang">
+        <option value="en">English</option>
+        <option value="es">Español</option>
+      </select>
+
+      <div class="hint" id="langHint"></div>
+    </div>
+
+    <div class="subtitle" id="subtitle"></div>
+
+    <div class="card">
+
+      <label id="lblName">Your Name</label>
+      <input id="senderName" placeholder="Your name" autocomplete="name">
+      <div class="warning" id="nameWarning"></div>
+
+      <label id="lblConn">Your Connection to Bancroft</label>
+      <select id="connection"></select>
+      <div class="warning" id="connectionWarning"></div>
+
+      <div class="gmailToggle" id="gmailToggle">
+        <label>
+          <input type="checkbox" id="gmailCheck">
+          <span class="toggleText" id="gmailToggleText"></span>
+        </label>
+      </div>
+
+      <div class="sendWrap">
+        <button class="sendBtn" id="sendBtn" disabled>Generar Mensaje</button>
+      </div>
+
+      <div class="helper" id="helperText"></div>
+
+      <!-- Manual toggle link -->
+      <div class="manualLink" id="manualToggle" role="button" tabindex="0">
+        <span id="manualToggleText">Could't Generate Message? Do it Manually</span> <span aria-hidden="true">▾</span>
+      </div>
+
+      <!-- Hidden manual menu -->
+      <div class="manualMenu" id="manualMenu">
+        <p class="manualTitle" id="manualTitle"></p>
+
+        <div class="copyGrid">
+          <button class="copyBtn" id="copySubjectBtn"></button>
+          <button class="copyBtn" id="copyToBtn"></button>
+          <button class="copyBtn" id="copyBodyBtn"></button>
+        </div>
+
+        <div class="copied" id="copiedToast">Copied ✓</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+
+if (!location.pathname.match(/^\/email-the-mdusd-board-members\/?$/)){
+  location.replace("/email-the-mdusd-board-members/");
+}
+
+/* =========================================================
+   EMAIL CONTENT (ALWAYS IN ENGLISH)
+========================================================= */
+
+const SUBJECT = "Please Pause the Phase-Out of Spanish Dual Immersion at Bancroft";
+
+const BASE = `Dear Superintendent Clark and Members of the Board,
+
+I am writing as a community member and signer of the petition urging the District to pause the phase-out of the Spanish Two-Way Dual Immersion (TWDI) Program at Bancroft Elementary.
+
+More than 400 community members have now signed in support of a pause. This level of concern reflects how deeply families value this program and how disruptive the current timeline has been.
+
+The January 28 announcement — just days before kindergarten enrollment opened — has left families scrambling to make decisions about sibling placement, transportation, and school stability. At the Bancroft Elementary Parent-Faculty Meeting on February 10, district representatives confirmed that the decision was made without consultation with Bancroft families and without a completed analysis of enrollment or demographic impacts.
+
+Regardless of where one stands on the program's long-term plans, decisions of this magnitude deserve transparent data, meaningful community engagement, and adequate time for families to plan.
+
+I respectfully urge the Board to:
+
+Pause implementation of the phase-out
+Share more information about the data and analysis that informed the decision
+Engage directly with Bancroft families before moving forward
+
+A pause is not a rejection of change — it is a commitment to thoughtful governance, equity, and student stability.
+
+Thank you for your time, service to our district, and for ensuring that decisions impacting children are made with care and transparency.`;
+
+/* =========================================================
+   RECIPIENTS
+========================================================= */
+
+const MEMBERS = [
+  ["Debra Mason","masond@mdusd.org"],
+  ["Keisha Nzewi","nzewik@mdusd.org"],
+  ["Brian Lawrence","lawrenceb@mdusd.org"],
+  ["Linda Mayo","mayol@mdusd.org"],
+  ["Tom McDougall","mcdougallt@mdusd.org"],
+  ["Alan Barrera Orellana","barreraorellanaa@mdusd.org"],
+  ["Dr. Adam Clark","clarka@mdusd.org"],
+  ["Erin DeMartini","demartinie@mdusd.org"],
+  ["Kathryn Fireman","firemank@mdusd.org"]
+];
+
+const TO_ALL = MEMBERS.map(m => m[1]).join(",");
+
+/* =========================================================
+   UI LANGUAGE STRINGS (form changes; email stays English)
+========================================================= */
+
+const STRINGS = {
+  en: {
+    pageTitle: "Email the MDUSD Board Members",
+    subtitle: `Fill out the form, then click <b>Generate Message</b> to open your email with a prepared draft addressed to the Board. Please review it and send it.<br><br>
+<b>Note:</b> For participation tracking, we record your name and connection to Bancroft, but not your email.`,
+    langHint: `Note: The email message will always be generated in <b>English</b>.`,
+    lblName: "Your full Name",
+    namePh: "Your full name",
+    nameWarn: "Please enter your full name.",
+    lblConn: "Your Connection to Bancroft",
+    connWarn: "Please select your connection to Bancroft.",
+    connPlaceholder: "Select one",
+    connOptions: [
+      ["Parent", "Parent"],
+      ["Community Member", "Community Member"],
+      ["Alumni", "Alumni"],
+      ["Resident", "Resident"],
+      ["Family Member", "Family Member"]
+    ],
+    gmailToggleText: "Use Gmail website instead of your email app",
+    sendBtn: "Generate Message",
+    helper: `<b>Tip:</b> A draft email will open pre-filled. Please review, then press Send.`,
+    manualToggleText: "Could't Generate Message? Do it Manually",
+    manualTitle: "If you prefer to compose the email manually, use these buttons to copy the subject, recipients, and message.",
+    copySubject: "Copy subject",
+    copyTo: "Copy recipients",
+    copyBody: "Copy message",
+    copied: "Copied ✓",
+    needForm: "Please fill out the form first.",
+    counterLabel: "Recorded participants:"
+  },
+  es: {
+    pageTitle: "Enviar correo al Board de MDUSD",
+    subtitle: `Complete el formulario y luego presione <b>Generar Mensaje</b> para abrir su correo con un borrador listo dirigido al Board. Por favor revise y envíe.<br><br>
+<b>Nota:</b> Para fines de conteo se registrará su nombre y su relación con Bancroft, no su correo.`,
+    langHint: `Nota: El mensaje del correo siempre se generará en <b>inglés</b>.`,
+    lblName: "Su Nombre completo",
+    namePh: "Su nombre completo",
+    nameWarn: "Por favor escriba su nombre completo.",
+    lblConn: "Su Relación con Bancroft",
+    connWarn: "Por favor seleccione su relación con Bancroft.",
+    connPlaceholder: "Seleccione una",
+    connOptions: [
+      ["Padre o Madre", "Parent"],
+      ["Miembro de la comunidad", "Community Member"],
+      ["Exalumno(a)", "Alumni"],
+      ["Residente", "Resident"],
+      ["Familiar", "Family Member"]
+    ],
+    gmailToggleText: "Usar el sitio web de Gmail en vez de su aplicación de email",
+    sendBtn: "Generar Mensaje",
+    helper: `<b>Consejo:</b> Se abrirá un borrador listo. Revíselo y luego presione Enviar.`,
+    manualToggleText: "No pudo Generar Mensaje? Hagalo Manualmente",
+    manualTitle: "Si prefiere redactar el correo manualmente, use estos botones para copiar el asunto, los destinatarios y el mensaje.",
+    copySubject: "Copiar asunto",
+    copyTo: "Copiar destinatarios",
+    copyBody: "Copiar mensaje",
+    copied: "Copiado ✓",
+    needForm: "Primero complete el formulario.",
+    counterLabel: "Participación registrada:"
+  }
+};
+
+const nameKey = "mdusd_senderName_v1";
+const langKey = "mdusd_lang_v1";
+
+// IMPORTANT: this must be the Web App /exec URL
+const TRACK_URL = "https://script.google.com/macros/s/AKfycbzLYxe6mTdCKx8GvBLNNnOaDIcqUG6I1vqXC4FMv4HErVpBlMlTAmJCy6BXegvF_OzroA/exec";
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function getLang(){ return localStorage.getItem(langKey) || "en"; }
+function setLang(v){ localStorage.setItem(langKey, v); }
+
+function getSenderName(){
+  return (document.getElementById("senderName").value || "").trim();
+}
+function getConnectionValue(){
+  return (document.getElementById("connection").value || "").trim(); // normalized value (EN)
+}
+
+function setWarning(elId, show){
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.classList.toggle("show", !!show);
+}
+function setNeedsField(fieldId, needs){
+  const el = document.getElementById(fieldId);
+  if (!el) return;
+  el.classList.toggle("needsField", !!needs);
+}
+
+function showCopiedToast(){
+  const t = document.getElementById("copiedToast");
+  const s = STRINGS[getLang()];
+  t.textContent = s.copied;
+  t.classList.add("show");
+  clearTimeout(showCopiedToast._timer);
+  showCopiedToast._timer = setTimeout(()=>t.classList.remove("show"), 1400);
+}
+
+async function copyText(text){
+  try{
+    await navigator.clipboard.writeText(text);
+    showCopiedToast();
+    return true;
+  }catch(err){
+    try{
+      const ta=document.createElement("textarea");
+      ta.value=text;
+      ta.setAttribute("readonly","");
+      ta.style.position="fixed";
+      ta.style.top="-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      showCopiedToast();
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+}
+
+function applyLanguage(){
+  const lang = getLang();
+  const s = STRINGS[lang];
+
+  document.documentElement.lang = lang;
+  document.getElementById("pageTitle").textContent = s.pageTitle;
+  document.getElementById("subtitle").innerHTML = s.subtitle;
+
+  document.getElementById("lblLang").textContent = "Language/Idioma";
+  document.getElementById("langHint").innerHTML = s.langHint;
+
+  // Counter labels
+  document.getElementById("counterLabel").textContent = s.counterLabel;
+
+  document.getElementById("lblName").textContent = s.lblName;
+  document.getElementById("senderName").placeholder = s.namePh;
+  document.getElementById("nameWarning").innerHTML = s.nameWarn;
+
+  document.getElementById("lblConn").textContent = s.lblConn;
+  document.getElementById("connectionWarning").innerHTML = s.connWarn;
+
+  document.getElementById("gmailToggleText").textContent = s.gmailToggleText;
+  document.getElementById("sendBtn").textContent = s.sendBtn;
+  document.getElementById("helperText").innerHTML = s.helper;
+
+  document.getElementById("manualToggleText").textContent = s.manualToggleText;
+  document.getElementById("manualTitle").textContent = s.manualTitle;
+
+  document.getElementById("copySubjectBtn").textContent = s.copySubject;
+  document.getElementById("copyToBtn").textContent = s.copyTo;
+  document.getElementById("copyBodyBtn").textContent = s.copyBody;
+
+  // rebuild connection select preserving selection
+  const current = getConnectionValue();
+  const sel = document.getElementById("connection");
+  sel.innerHTML = "";
+
+  const ph = document.createElement("option");
+  ph.value = "";
+  ph.textContent = s.connPlaceholder;
+  sel.appendChild(ph);
+
+  s.connOptions.forEach(([label, value])=>{
+    const o = document.createElement("option");
+    o.value = value;
+    o.textContent = label;
+    sel.appendChild(o);
+  });
+
+  if (current) sel.value = current;
+}
+
+/* =========================================================
+   COUNTER (reads from Apps Script doGet)
+   Requires Apps Script doGet to return: { ok:true, peopleCount: <number> }
+========================================================= */
+
+async function refreshCounter(){
+  // Cache for 10 minutes so you don't hammer Apps Script
+  const cacheKey = "mdusd_people_count_cache_v1";
+  const cached = localStorage.getItem(cacheKey);
+  if (cached){
+    try{
+      const obj = JSON.parse(cached);
+      if (obj && typeof obj.value === "number" && (Date.now() - obj.ts) < 10*60*1000){
+        setCounterUI(obj.value);
+        return;
+      }
+    }catch(e){}
+  }
+
+  try{
+    const res = await fetch(TRACK_URL + "?stats=1", { method:"GET" });
+    const json = await res.json();
+    if (json && json.ok && typeof json.peopleCount === "number"){
+      localStorage.setItem(cacheKey, JSON.stringify({ value: json.peopleCount, ts: Date.now() }));
+      setCounterUI(json.peopleCount);
+    }
+  }catch(e){
+    // silent; keep UI hidden if it fails
+  }
+}
+
+function setCounterUI(count){
+  const pill = document.getElementById("counterPill");
+  const val = document.getElementById("counterValue");
+  if (!pill || !val) return;
+
+  val.textContent = String(count);
+  pill.style.display = "inline-flex";
+}
+
+/* =========================================================
+   VALIDATION + MANUAL MENU GATE
+========================================================= */
+
+function setManualEnabled(enabled){
+  const link = document.getElementById("manualToggle");
+  link.classList.toggle("disabled", !enabled);
+  link.setAttribute("aria-disabled", enabled ? "false" : "true");
+  link.tabIndex = enabled ? 0 : -1;
+  if (!enabled) document.getElementById("manualMenu").classList.remove("show");
+}
+
+function validate(){
+  const nameOk = getSenderName().length > 0;
+  const connOk = getConnectionValue().length > 0;
+  const ok = nameOk && connOk;
+
+  setWarning("nameWarning", !nameOk);
+  setNeedsField("senderName", !nameOk);
+
+  setWarning("connectionWarning", !connOk);
+  setNeedsField("connection", !connOk);
+
+  document.getElementById("sendBtn").disabled = !ok;
+  setManualEnabled(ok);
+
+  return ok;
+}
+
+/* =========================================================
+   EMAIL (ALWAYS ENGLISH)
+========================================================= */
+
+function buildBodyEnglish(){
+  const sender = getSenderName();
+  const connectionNormalized = getConnectionValue();
+  return `${BASE}
+
+Sincerely,
+${sender}
+${connectionNormalized}`;
+}
+
+function openEmailToAll(){
+  if (!validate()) return;
+
+  trackEvent("generate");
+
+  const gmail = document.getElementById("gmailCheck").checked;
+  const body = buildBodyEnglish();
+
+  if (gmail){
+    const link =
+      `https://mail.google.com/mail/?view=cm&fs=1` +
+      `&to=${encodeURIComponent(TO_ALL)}` +
+      `&su=${encodeURIComponent(SUBJECT)}` +
+      `&body=${encodeURIComponent(body)}`;
+
+    window.open(link, "_blank");
+    return;
+  }
+
+  const link =
+    `mailto:${encodeURIComponent(TO_ALL)}` +
+    `?subject=${encodeURIComponent(SUBJECT)}` +
+    `&body=${encodeURIComponent(body)}`;
+
+  window.location.href = link;
+}
+
+function isMobileDevice(){
+  return (
+    window.matchMedia("(max-width: 768px)").matches ||
+    navigator.maxTouchPoints > 1 ||
+    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+  );
+}
+
+/* =========================================================
+   MANUAL MENU BEHAVIOR
+========================================================= */
+
+function toggleManualMenu(){
+  const ok = validate();
+  if (!ok) {
+    const s = STRINGS[getLang()];
+    alert(s.needForm);
+    return;
+  }
+  document.getElementById("manualMenu").classList.toggle("show");
+}
+
+function setupManualButtons(){
+  document.getElementById("copySubjectBtn").addEventListener("click", async ()=>{
+    const ok = await copyText(SUBJECT);
+    if(ok) trackEvent("copy_subject");
+  });
+
+  document.getElementById("copyToBtn").addEventListener("click", async ()=>{
+    const ok = await copyText(TO_ALL);
+    if(ok) trackEvent("copy_to");
+  });
+
+  document.getElementById("copyBodyBtn").addEventListener("click", async ()=>{
+    const ok = await copyText(buildBodyEnglish());
+    if(ok) trackEvent("copy_body");
+  });
+}
+
+/* =========================================================
+   LOGGING
+========================================================= */
+
+const anonIdKey = "mdusd_anon_id_v1";
+function getAnonId(){
+  let id = localStorage.getItem(anonIdKey);
+  if(!id){
+    id = (crypto?.randomUUID?.() || ("id_" + Math.random().toString(16).slice(2) + Date.now()));
+    localStorage.setItem(anonIdKey, id);
+  }
+  return id;
+}
+
+async function trackEvent(action){
+  const payload = {
+    action,
+    name: getSenderName(),
+    connection: getConnectionValue(),
+    anonId: getAnonId(),
+    userAgent: navigator.userAgent,
+    referrer: document.referrer || location.href
+  };
+
+  try{
+    fetch(TRACK_URL, {
+      method: "POST",
+      body: JSON.stringify(payload) // text/plain by default (no preflight)
+    });
+  }catch(e){
+    // ignore
+  }
+}
+
+/* =========================================================
+   INIT
+========================================================= */
+
+(function init(){
+  const savedName = (localStorage.getItem(nameKey) || "").trim();
+  if (savedName) document.getElementById("senderName").value = savedName;
+
+  document.getElementById("lang").value = getLang();
+  applyLanguage();
+
+  document.getElementById("lang").addEventListener("change", (e)=>{
+    setLang(e.target.value);
+    applyLanguage();
+    validate();
+  });
+
+  document.getElementById("senderName").addEventListener("input", ()=>{
+    localStorage.setItem(nameKey, getSenderName());
+    validate();
+  });
+
+  document.getElementById("connection").addEventListener("change", validate);
+
+  document.getElementById("sendBtn").addEventListener("click", openEmailToAll);
+
+  const manualToggle = document.getElementById("manualToggle");
+  manualToggle.addEventListener("click", toggleManualMenu);
+  manualToggle.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggleManualMenu();
+    }
+  });
+
+  setupManualButtons();
+  validate();
+
+  // Load counter once on page load
+  refreshCounter();
+
+  // Hide Gmail toggle on mobile
+  if (isMobileDevice()){
+    document.getElementById("gmailCheck").checked = false;
+    const g = document.getElementById("gmailToggle");
+    if (g) g.style.display = "none";
+  }
+  
+})();
+</script>
+</body>
+</html>
