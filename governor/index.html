@@ -461,12 +461,14 @@ const STRINGS = {
   }
 };
 
-const nameKey = "mdusd_senderName_v1";
-const langKey = "mdusd_lang_v1";
+const nameKey = "mdusd_senderName_v1_" + CAMPAIGN;
+const langKey = "mdusd_lang_v1_" + CAMPAIGN;
+const anonIdKey = "mdusd_anon_id_v1_" + CAMPAIGN;
 
 // IMPORTANT: this must be the Web App /exec URL
 const TRACK_URL = "https://script.google.com/macros/s/AKfycbzLYxe6mTdCKx8GvBLNNnOaDIcqUG6I1vqXC4FMv4HErVpBlMlTAmJCy6BXegvF_OzroA/exec";
-
+const CAMPAIGN = "governor";
+  
 /* =========================================================
    HELPERS
 ========================================================= */
@@ -584,7 +586,7 @@ function applyLanguage(){
 
 async function refreshCounter(){
   // Cache for 10 minutes so you don't hammer Apps Script
-  const cacheKey = "mdusd_people_count_cache_v1";
+  const cacheKey = "mdusd_people_count_cache_v1_" + CAMPAIGN;
   const cached = localStorage.getItem(cacheKey);
   if (cached){
     try{
@@ -597,7 +599,7 @@ async function refreshCounter(){
   }
 
   try{
-    const res = await fetch(TRACK_URL + "?stats=1", { method:"GET" });
+    const res = await fetch(TRACK_URL + "?stats=1&campaign=" + encodeURIComponent(CAMPAIGN), { method:"GET" });
     const json = await res.json();
     if (json && json.ok && typeof json.peopleCount === "number"){
       localStorage.setItem(cacheKey, JSON.stringify({ value: json.peopleCount, ts: Date.now() }));
@@ -729,8 +731,6 @@ function setupManualButtons(){
 /* =========================================================
    LOGGING
 ========================================================= */
-
-const anonIdKey = "mdusd_anon_id_v1";
 function getAnonId(){
   let id = localStorage.getItem(anonIdKey);
   if(!id){
@@ -742,6 +742,7 @@ function getAnonId(){
 
 async function trackEvent(action){
   const payload = {
+    campaign: CAMPAIGN,
     action,
     name: getSenderName(),
     connection: getConnectionValue(),
