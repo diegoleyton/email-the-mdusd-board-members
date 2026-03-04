@@ -353,46 +353,38 @@ input:focus, select:focus{
 /* =========================================================
    EMAIL CONTENT (ALWAYS IN ENGLISH)
 ========================================================= */
+`Dear Governor Newsom,
 
-const SUBJECT = "Please Pause the Phase-Out of Spanish Dual Immersion at Bancroft";
+I am writing as a concerned community member regarding the recent decision by the Mount Diablo Unified School District (MDUSD) to eliminate the long-standing, beloved, high-performing Spanish Immersion program at Bancroft Elementary in Walnut Creek, with extremely short notice and without involving program families.
 
-const BASE = `Dear Superintendent Clark and Members of the Board,
+On January 28, 2026, families were informed less than two weeks before kindergarten enrollment opened that the district would not accept new kindergarteners into the Bancroft Spanish immersion program, and instead, kindergarteners were given the option to enroll in a new program at another school. This decision was announced without meaningful community engagement or required consultations with advisory bodies such as the English Learner Advisory Committee (ELAC), the District English Learner Advisory Committee (DELAC), the Local Control and Accountability Plan (LCAP) committee, or the Bancroft School Site Council, all of which are core components of the California Education Code governing major program changes.
 
-I am writing as a community member and signer of the petition urging the District to pause the phase-out of the Spanish Two-Way Dual Immersion (TWDI) Program at Bancroft Elementary.
+Available data show that the district’s stated reasons for the elimination, staffing shortages, space limitations, and performance concerns have been shown to be inaccurate or unrelated to the decision. Many families made significant life decisions to attend the Spanish Immersion Program at Bancroft Elementary, including purchasing homes near the school, to support their children’s bilingual education and cultural identity.
 
-More than 400 community members have now signed in support of a pause. This level of concern reflects how deeply families value this program and how disruptive the current timeline has been.
+This decision risks undermining equity, reducing diversity in high-performing schools, and eroding trust in the district’s process. In 2022, efforts to isolate Walnut Creek Schools, including Bancroft Elementary and the middle school and high school that Bancroft feeds into, were stopped by the California Department of Education because the move "had undertones of racial and socioeconomic segregation.”
 
-The January 28 announcement — just days before kindergarten enrollment opened — has left families scrambling to make decisions about sibling placement, transportation, and school stability. At the Bancroft Elementary Parent-Faculty Meeting on February 10, district representatives confirmed that the decision was made without consultation with Bancroft families and without a completed analysis of enrollment or demographic impacts.
+The concerned parents of Spanish Immersion students launched a petition that already has over 550 signatures, and they have attended the board meetings and city council meetings to provide public testimony calling for a pause, transparency, and lawful public engagement before major changes are implemented.
 
-Regardless of where one stands on the program's long-term plans, decisions of this magnitude deserve transparent data, meaningful community engagement, and adequate time for families to plan.
+Governor Newsom, California has a longstanding commitment to educational equity, meaningful family engagement, and access to high-quality bilingual education. I respectfully ask for your leadership in urging the Mount Diablo Unified School District to:
 
-I respectfully urge the  to:
+        • Pause the termination of the Bancroft Spanish Immersion program immediately;
 
-Pause implementation of the phase-out
-Share more information about the data and analysis that informed the decision
-Engage directly with Bancroft families before moving forward
+        • Ensure full compliance with California Education Code requirements for community engagement and transparency;
 
-A pause is not a rejection of change — it is a commitment to thoughtful governance, equity, and student stability.
+        • Work with MDUSD and affected families to explore solutions that preserve access to high-quality bilingual education at Bancroft Elementary and beyond.
 
-Thank you for your time, service to our district, and for ensuring that decisions impacting children are made with care and transparency.`;
+Thank you for your attention to this matter and for your leadership in supporting educational equity for all California families.`;
 
 /* =========================================================
    RECIPIENTS
 ========================================================= */
 
 const MEMBERS = [
-  ["Debra Mason","masond@mdusd.org"],
-  ["Keisha Nzewi","nzewik@mdusd.org"],
-  ["Brian Lawrence","lawrenceb@mdusd.org"],
-  ["Linda Mayo","mayol@mdusd.org"],
-  ["Tom McDougall","mcdougallt@mdusd.org"],
-  ["Alan Barrera Orellana","barreraorellanaa@mdusd.org"],
-  ["Dr. Adam Clark","clarka@mdusd.org"],
-  ["Erin DeMartini","demartinie@mdusd.org"],
-  ["Kathryn Fireman","firemank@mdusd.org"]
+  "governor@governor.ca.gov",
+  "gavin.newsom@gov.ca.gov"
 ];
 
-const TO_ALL = MEMBERS.map(m => m[1]).join(",");
+const TO_ALL = MEMBERS.map(m => m).join(",");
 
 /* =========================================================
    UI LANGUAGE STRINGS (form changes; email stays English)
@@ -658,9 +650,10 @@ function buildBodyEnglish(){
   const connectionNormalized = getConnectionValue();
   return `${BASE}
 
-Sincerely,
+Respectfully,
 ${sender}
-${connectionNormalized}`;
+${city}, ${zipcode}
+${contact}`;
 }
 
 function openEmailToAll(){
