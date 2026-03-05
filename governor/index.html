@@ -269,9 +269,6 @@ input:focus, select:focus{
   background:#16a34a;
   display:inline-block;
 }
-.counterSub{
-  opacity:.85;
-}
 </style>
 </head>
 
@@ -282,7 +279,7 @@ input:focus, select:focus{
     <div class="titleBlock">
       <img class="titleLogo" src="../logo2.png" alt="logo">
       <h2 class="title" id="pageTitle">Email the Governor</h2>
-      <!-- Counter shown near the top -->
+
       <div class="counterPill" id="counterPill" style="display:none;">
         <span class="counterDot" aria-hidden="true"></span>
         <span id="counterLabel"></span>
@@ -290,14 +287,12 @@ input:focus, select:focus{
       </div>
     </div>
 
-    <!-- Language selector FIRST thing after title -->
     <div class="card" style="margin-bottom:12px;">
       <label id="lblLang">Language/Idioma</label>
       <select id="lang">
         <option value="en">English</option>
         <option value="es">Español</option>
       </select>
-
       <div class="hint" id="langHint"></div>
     </div>
 
@@ -306,12 +301,20 @@ input:focus, select:focus{
     <div class="card">
 
       <label id="lblName">Your Name</label>
-      <input id="senderName" placeholder="Your name" autocomplete="name">
+      <input id="senderName" placeholder="Your full name" autocomplete="name">
       <div class="warning" id="nameWarning"></div>
 
-      <label id="lblConn">Your Connection to Bancroft</label>
-      <select id="connection"></select>
-      <div class="warning" id="connectionWarning"></div>
+      <label id="lblCity">City</label>
+      <input id="city" placeholder="City">
+      <div class="warning" id="cityWarning"></div>
+
+      <label id="lblZip">Zip Code</label>
+      <input id="zipcode" placeholder="Zip code" inputmode="numeric" autocomplete="postal-code">
+      <div class="warning" id="zipWarning"></div>
+
+      <label id="lblContact">Contact</label>
+      <input id="contact" placeholder="email / phone" autocomplete="email">
+      <div class="warning" id="contactWarning"></div>
 
       <div class="gmailToggle" id="gmailToggle">
         <label>
@@ -321,17 +324,15 @@ input:focus, select:focus{
       </div>
 
       <div class="sendWrap">
-        <button class="sendBtn" id="sendBtn" disabled>Generar Mensaje</button>
+        <button class="sendBtn" id="sendBtn" disabled>Generate Message</button>
       </div>
 
       <div class="helper" id="helperText"></div>
 
-      <!-- Manual toggle link -->
       <div class="manualLink" id="manualToggle" role="button" tabindex="0">
         <span id="manualToggleText">Could't Generate Message? Do it Manually</span> <span aria-hidden="true">▾</span>
       </div>
 
-      <!-- Hidden manual menu -->
       <div class="manualMenu" id="manualMenu">
         <p class="manualTitle" id="manualTitle"></p>
 
@@ -349,11 +350,29 @@ input:focus, select:focus{
 </div>
 
 <script>
+/* =========================================================
+   CAMPAIGN + STORAGE KEYS
+========================================================= */
+const CAMPAIGN = "governor";
+
+const langKey   = "mdusd_lang_v1";                 // shared across tabs (as you wanted)
+const nameKey   = "mdusd_senderName_v1_" + CAMPAIGN;
+const cityKey   = "mdusd_city_v1_" + CAMPAIGN;
+const zipKey    = "mdusd_zip_v1_" + CAMPAIGN;
+const contactKey= "mdusd_contact_v1_" + CAMPAIGN;
+const anonIdKey = "mdusd_anon_id_v1_" + CAMPAIGN;
 
 /* =========================================================
-   EMAIL CONTENT (ALWAYS IN ENGLISH)
+   TRACKING BACKEND
 ========================================================= */
-`Dear Governor Newsom,
+const TRACK_URL = "https://script.google.com/macros/s/AKfycbzLYxe6mTdCKx8GvBLNNnOaDIcqUG6I1vqXC4FMv4HErVpBlMlTAmJCy6BXegvF_OzroA/exec";
+
+/* =========================================================
+   EMAIL CONTENT (ALWAYS ENGLISH)
+========================================================= */
+const SUBJECT = "Request for Intervention: MDUSD Elimination of Bancroft Spanish Immersion Program";
+
+const BASE = `Dear Governor Newsom,
 
 I am writing as a concerned community member regarding the recent decision by the Mount Diablo Unified School District (MDUSD) to eliminate the long-standing, beloved, high-performing Spanish Immersion program at Bancroft Elementary in Walnut Creek, with extremely short notice and without involving program families.
 
@@ -367,52 +386,58 @@ The concerned parents of Spanish Immersion students launched a petition that alr
 
 Governor Newsom, California has a longstanding commitment to educational equity, meaningful family engagement, and access to high-quality bilingual education. I respectfully ask for your leadership in urging the Mount Diablo Unified School District to:
 
-        • Pause the termination of the Bancroft Spanish Immersion program immediately;
-
-        • Ensure full compliance with California Education Code requirements for community engagement and transparency;
-
-        • Work with MDUSD and affected families to explore solutions that preserve access to high-quality bilingual education at Bancroft Elementary and beyond.
+• Pause the termination of the Bancroft Spanish Immersion program immediately;
+• Ensure full compliance with California Education Code requirements for community engagement and transparency;
+• Work with MDUSD and affected families to explore solutions that preserve access to high-quality bilingual education at Bancroft Elementary and beyond.
 
 Thank you for your attention to this matter and for your leadership in supporting educational equity for all California families.`;
 
 /* =========================================================
-   RECIPIENTS
+   RECIPIENTS (list of emails)
 ========================================================= */
-
-const MEMBERS = [
+const RECIPIENT_EMAILS = [
   "governor@governor.ca.gov",
   "gavin.newsom@gov.ca.gov"
 ];
 
-const TO_ALL = MEMBERS.map(m => m).join(",");
+// Works for 1 or many
+const TO_ALL = RECIPIENT_EMAILS
+  .map(e => String(e || "").trim())
+  .filter(Boolean)
+  .join(",");
 
 /* =========================================================
    UI LANGUAGE STRINGS (form changes; email stays English)
 ========================================================= */
-
 const STRINGS = {
   en: {
     pageTitle: "Email the Governor",
     subtitle: `Fill out the form, then click <b>Generate Message</b> to open your email with a prepared draft addressed to the Governor. Please review it and send it.<br><br>
-<b>Note:</b> For participation tracking, we record your name and connection to Bancroft, but not your email.`,
+<b>Note:</b> For participation tracking, we record your name (and basic form fields), but not your email address.`,
     langHint: `Note: The email message will always be generated in <b>English</b>.`,
-    lblName: "Your full Name",
+
+    lblName: "Your full name",
     namePh: "Your full name",
     nameWarn: "Please enter your full name.",
-    lblConn: "Your Connection to Bancroft",
-    connWarn: "Please select your connection to Bancroft.",
-    connPlaceholder: "Select one",
-    connOptions: [
-      ["Parent", "Parent"],
-      ["Community Member", "Community Member"],
-      ["Alumni", "Alumni"],
-      ["Resident", "Resident"],
-      ["Family Member", "Family Member"]
-    ],
+
+    lblCity: "City",
+    cityPh: "City",
+    cityWarn: "Please enter your city.",
+
+    lblZip: "Zip code",
+    zipPh: "Zip code",
+    zipWarn: "Please enter your zip code.",
+
+    lblContact: "Contact",
+    contactPh: "email / phone",
+    contactWarn: "Please enter a contact (email / phone).",
+    contactHint: "Suggested format: email / phone",
+
     gmailToggleText: "Use Gmail website instead of your email app",
     sendBtn: "Generate Message",
     helper: `<b>Tip:</b> A draft email will open pre-filled. Please review, then press Send.`,
-    manualToggleText: "Could't Generate Message? Do it Manually",
+
+    manualToggleText: "Couldn't generate message? Do it manually",
     manualTitle: "If you prefer to compose the email manually, use these buttons to copy the subject, recipients, and message.",
     copySubject: "Copy subject",
     copyTo: "Copy recipients",
@@ -424,25 +449,31 @@ const STRINGS = {
   es: {
     pageTitle: "Enviar correo al Gobernador",
     subtitle: `Complete el formulario y luego presione <b>Generar Mensaje</b> para abrir su correo con un borrador listo dirigido al Gobernador. Por favor revise y envíe.<br><br>
-<b>Nota:</b> Para fines de conteo se registrará su nombre y su relación con Bancroft, no su correo.`,
+<b>Nota:</b> Para fines de conteo se registrará su nombre (y campos básicos del formulario), no su correo.`,
     langHint: `Nota: El mensaje del correo siempre se generará en <b>inglés</b>.`,
-    lblName: "Su Nombre completo",
+
+    lblName: "Su nombre completo",
     namePh: "Su nombre completo",
     nameWarn: "Por favor escriba su nombre completo.",
-    lblConn: "Su Relación con Bancroft",
-    connWarn: "Por favor seleccione su relación con Bancroft.",
-    connPlaceholder: "Seleccione una",
-    connOptions: [
-      ["Padre o Madre", "Parent"],
-      ["Miembro de la comunidad", "Community Member"],
-      ["Exalumno(a)", "Alumni"],
-      ["Residente", "Resident"],
-      ["Familiar", "Family Member"]
-    ],
+
+    lblCity: "Ciudad",
+    cityPh: "Ciudad",
+    cityWarn: "Por favor escriba su ciudad.",
+
+    lblZip: "Código postal",
+    zipPh: "Código postal",
+    zipWarn: "Por favor escriba su código postal.",
+
+    lblContact: "Contacto",
+    contactPh: "email / teléfono",
+    contactWarn: "Por favor escriba un contacto (email / teléfono).",
+    contactHint: "Formato sugerido: email / teléfono",
+
     gmailToggleText: "Usar el sitio web de Gmail en vez de su aplicación de email",
     sendBtn: "Generar Mensaje",
     helper: `<b>Consejo:</b> Se abrirá un borrador listo. Revíselo y luego presione Enviar.`,
-    manualToggleText: "No pudo Generar Mensaje? Hagalo Manualmente",
+
+    manualToggleText: "¿No pudo generar el mensaje? Hágalo manualmente",
     manualTitle: "Si prefiere redactar el correo manualmente, use estos botones para copiar el asunto, los destinatarios y el mensaje.",
     copySubject: "Copiar asunto",
     copyTo: "Copiar destinatarios",
@@ -453,42 +484,32 @@ const STRINGS = {
   }
 };
 
-const CAMPAIGN = "governor";
-  
-const nameKey = "mdusd_senderName_v1_" + CAMPAIGN;
-const langKey = "mdusd_lang_v1";
-const anonIdKey = "mdusd_anon_id_v1_" + CAMPAIGN;
-
-// IMPORTANT: this must be the Web App /exec URL
-const TRACK_URL = "https://script.google.com/macros/s/AKfycbzLYxe6mTdCKx8GvBLNNnOaDIcqUG6I1vqXC4FMv4HErVpBlMlTAmJCy6BXegvF_OzroA/exec";
-  
 /* =========================================================
    HELPERS
 ========================================================= */
-
 function getLang(){ return localStorage.getItem(langKey) || "en"; }
 function setLang(v){ localStorage.setItem(langKey, v); }
 
-function getSenderName(){
-  return (document.getElementById("senderName").value || "").trim();
-}
-function getConnectionValue(){
-  return (document.getElementById("connection").value || "").trim(); // normalized value (EN)
-}
+function $(id){ return document.getElementById(id); }
+
+function getSenderName(){ return ($("senderName").value || "").trim(); }
+function getCity(){ return ($("city").value || "").trim(); }
+function getZip(){ return ($("zipcode").value || "").trim(); }
+function getContact(){ return ($("contact").value || "").trim(); }
 
 function setWarning(elId, show){
-  const el = document.getElementById(elId);
+  const el = $(elId);
   if (!el) return;
   el.classList.toggle("show", !!show);
 }
 function setNeedsField(fieldId, needs){
-  const el = document.getElementById(fieldId);
+  const el = $(fieldId);
   if (!el) return;
   el.classList.toggle("needsField", !!needs);
 }
 
 function showCopiedToast(){
-  const t = document.getElementById("copiedToast");
+  const t = $("copiedToast");
   const s = STRINGS[getLang()];
   t.textContent = s.copied;
   t.classList.add("show");
@@ -525,60 +546,46 @@ function applyLanguage(){
   const s = STRINGS[lang];
 
   document.documentElement.lang = lang;
-  document.getElementById("pageTitle").textContent = s.pageTitle;
-  document.getElementById("subtitle").innerHTML = s.subtitle;
+  $("pageTitle").textContent = s.pageTitle;
+  $("subtitle").innerHTML = s.subtitle;
 
-  document.getElementById("lblLang").textContent = "Language/Idioma";
-  document.getElementById("langHint").innerHTML = s.langHint;
+  $("lblLang").textContent = "Language/Idioma";
+  $("langHint").innerHTML = s.langHint;
 
-  // Counter labels
-  document.getElementById("counterLabel").textContent = s.counterLabel;
+  $("counterLabel").textContent = s.counterLabel;
 
-  document.getElementById("lblName").textContent = s.lblName;
-  document.getElementById("senderName").placeholder = s.namePh;
-  document.getElementById("nameWarning").innerHTML = s.nameWarn;
+  $("lblName").textContent = s.lblName;
+  $("senderName").placeholder = s.namePh;
+  $("nameWarning").textContent = s.nameWarn;
 
-  document.getElementById("lblConn").textContent = s.lblConn;
-  document.getElementById("connectionWarning").innerHTML = s.connWarn;
+  $("lblCity").textContent = s.lblCity;
+  $("city").placeholder = s.cityPh;
+  $("cityWarning").textContent = s.cityWarn;
 
-  document.getElementById("gmailToggleText").textContent = s.gmailToggleText;
-  document.getElementById("sendBtn").textContent = s.sendBtn;
-  document.getElementById("helperText").innerHTML = s.helper;
+  $("lblZip").textContent = s.lblZip;
+  $("zipcode").placeholder = s.zipPh;
+  $("zipWarning").textContent = s.zipWarn;
 
-  document.getElementById("manualToggleText").textContent = s.manualToggleText;
-  document.getElementById("manualTitle").textContent = s.manualTitle;
+  $("lblContact").textContent = s.lblContact;
+  $("contact").placeholder = s.contactPh;
+  $("contactWarning").textContent = s.contactWarn;
 
-  document.getElementById("copySubjectBtn").textContent = s.copySubject;
-  document.getElementById("copyToBtn").textContent = s.copyTo;
-  document.getElementById("copyBodyBtn").textContent = s.copyBody;
+  $("gmailToggleText").textContent = s.gmailToggleText;
+  $("sendBtn").textContent = s.sendBtn;
+  $("helperText").innerHTML = s.helper;
 
-  // rebuild connection select preserving selection
-  const current = getConnectionValue();
-  const sel = document.getElementById("connection");
-  sel.innerHTML = "";
+  $("manualToggleText").textContent = s.manualToggleText;
+  $("manualTitle").textContent = s.manualTitle;
 
-  const ph = document.createElement("option");
-  ph.value = "";
-  ph.textContent = s.connPlaceholder;
-  sel.appendChild(ph);
-
-  s.connOptions.forEach(([label, value])=>{
-    const o = document.createElement("option");
-    o.value = value;
-    o.textContent = label;
-    sel.appendChild(o);
-  });
-
-  if (current) sel.value = current;
+  $("copySubjectBtn").textContent = s.copySubject;
+  $("copyToBtn").textContent = s.copyTo;
+  $("copyBodyBtn").textContent = s.copyBody;
 }
 
 /* =========================================================
-   COUNTER (reads from Apps Script doGet)
-   Requires Apps Script doGet to return: { ok:true, peopleCount: <number> }
+   COUNTER
 ========================================================= */
-
 async function refreshCounter(){
-  // Cache for 10 minutes so you don't hammer Apps Script
   const cacheKey = "mdusd_people_count_cache_v1_" + CAMPAIGN;
   const cached = localStorage.getItem(cacheKey);
   if (cached){
@@ -599,13 +606,13 @@ async function refreshCounter(){
       setCounterUI(json.peopleCount);
     }
   }catch(e){
-    // silent; keep UI hidden if it fails
+    // silent
   }
 }
 
 function setCounterUI(count){
-  const pill = document.getElementById("counterPill");
-  const val = document.getElementById("counterValue");
+  const pill = $("counterPill");
+  const val = $("counterValue");
   if (!pill || !val) return;
 
   val.textContent = String(count);
@@ -615,39 +622,47 @@ function setCounterUI(count){
 /* =========================================================
    VALIDATION + MANUAL MENU GATE
 ========================================================= */
-
 function setManualEnabled(enabled){
-  const link = document.getElementById("manualToggle");
+  const link = $("manualToggle");
   link.classList.toggle("disabled", !enabled);
   link.setAttribute("aria-disabled", enabled ? "false" : "true");
   link.tabIndex = enabled ? 0 : -1;
-  if (!enabled) document.getElementById("manualMenu").classList.remove("show");
+  if (!enabled) $("manualMenu").classList.remove("show");
 }
 
 function validate(){
   const nameOk = getSenderName().length > 0;
-  const connOk = getConnectionValue().length > 0;
-  const ok = nameOk && connOk;
+  const cityOk = getCity().length > 0;
+  const zipOk = getZip().length > 0;
+  const contactOk = getContact().length > 0;
 
   setWarning("nameWarning", !nameOk);
   setNeedsField("senderName", !nameOk);
 
-  setWarning("connectionWarning", !connOk);
-  setNeedsField("connection", !connOk);
+  setWarning("cityWarning", !cityOk);
+  setNeedsField("city", !cityOk);
 
-  document.getElementById("sendBtn").disabled = !ok;
+  setWarning("zipWarning", !zipOk);
+  setNeedsField("zipcode", !zipOk);
+
+  setWarning("contactWarning", !contactOk);
+  setNeedsField("contact", !contactOk);
+
+  const ok = nameOk && cityOk && zipOk && contactOk;
+  $("sendBtn").disabled = !ok;
   setManualEnabled(ok);
-
   return ok;
 }
 
 /* =========================================================
    EMAIL (ALWAYS ENGLISH)
 ========================================================= */
-
 function buildBodyEnglish(){
   const sender = getSenderName();
-  const connectionNormalized = getConnectionValue();
+  const city = getCity();
+  const zipcode = getZip();
+  const contact = getContact();
+
   return `${BASE}
 
 Respectfully,
@@ -661,7 +676,7 @@ function openEmailToAll(){
 
   trackEvent("generate");
 
-  const gmail = document.getElementById("gmailCheck").checked;
+  const gmail = $("gmailCheck").checked;
   const body = buildBodyEnglish();
 
   if (gmail){
@@ -675,6 +690,7 @@ function openEmailToAll(){
     return;
   }
 
+  // Note: mailto supports comma-separated recipients in most clients
   const link =
     `mailto:${encodeURIComponent(TO_ALL)}` +
     `?subject=${encodeURIComponent(SUBJECT)}` +
@@ -694,7 +710,6 @@ function isMobileDevice(){
 /* =========================================================
    MANUAL MENU BEHAVIOR
 ========================================================= */
-
 function toggleManualMenu(){
   const ok = validate();
   if (!ok) {
@@ -702,21 +717,21 @@ function toggleManualMenu(){
     alert(s.needForm);
     return;
   }
-  document.getElementById("manualMenu").classList.toggle("show");
+  $("manualMenu").classList.toggle("show");
 }
 
 function setupManualButtons(){
-  document.getElementById("copySubjectBtn").addEventListener("click", async ()=>{
+  $("copySubjectBtn").addEventListener("click", async ()=>{
     const ok = await copyText(SUBJECT);
     if(ok) trackEvent("copy_subject");
   });
 
-  document.getElementById("copyToBtn").addEventListener("click", async ()=>{
+  $("copyToBtn").addEventListener("click", async ()=>{
     const ok = await copyText(TO_ALL);
     if(ok) trackEvent("copy_to");
   });
 
-  document.getElementById("copyBodyBtn").addEventListener("click", async ()=>{
+  $("copyBodyBtn").addEventListener("click", async ()=>{
     const ok = await copyText(buildBodyEnglish());
     if(ok) trackEvent("copy_body");
   });
@@ -735,11 +750,12 @@ function getAnonId(){
 }
 
 async function trackEvent(action){
+  // Backend requires "connection" today; we send a fixed value and keep it out of UI.
   const payload = {
     campaign: CAMPAIGN,
     action,
     name: getSenderName(),
-    connection: getConnectionValue(),
+    connection: "N/A",
     anonId: getAnonId(),
     userAgent: navigator.userAgent,
     referrer: document.referrer || location.href
@@ -758,30 +774,51 @@ async function trackEvent(action){
 /* =========================================================
    INIT
 ========================================================= */
-
 (function init(){
+  // Restore saved fields
   const savedName = (localStorage.getItem(nameKey) || "").trim();
-  if (savedName) document.getElementById("senderName").value = savedName;
+  if (savedName) $("senderName").value = savedName;
 
-  document.getElementById("lang").value = getLang();
+  const savedCity = (localStorage.getItem(cityKey) || "").trim();
+  if (savedCity) $("city").value = savedCity;
+
+  const savedZip = (localStorage.getItem(zipKey) || "").trim();
+  if (savedZip) $("zipcode").value = savedZip;
+
+  const savedContact = (localStorage.getItem(contactKey) || "").trim();
+  if (savedContact) $("contact").value = savedContact;
+
+  // Language
+  $("lang").value = getLang();
   applyLanguage();
 
-  document.getElementById("lang").addEventListener("change", (e)=>{
+  $("lang").addEventListener("change", (e)=>{
     setLang(e.target.value);
     applyLanguage();
     validate();
   });
 
-  document.getElementById("senderName").addEventListener("input", ()=>{
+  // Persist on input
+  $("senderName").addEventListener("input", ()=>{
     localStorage.setItem(nameKey, getSenderName());
     validate();
   });
+  $("city").addEventListener("input", ()=>{
+    localStorage.setItem(cityKey, getCity());
+    validate();
+  });
+  $("zipcode").addEventListener("input", ()=>{
+    localStorage.setItem(zipKey, getZip());
+    validate();
+  });
+  $("contact").addEventListener("input", ()=>{
+    localStorage.setItem(contactKey, getContact());
+    validate();
+  });
 
-  document.getElementById("connection").addEventListener("change", validate);
+  $("sendBtn").addEventListener("click", openEmailToAll);
 
-  document.getElementById("sendBtn").addEventListener("click", openEmailToAll);
-
-  const manualToggle = document.getElementById("manualToggle");
+  const manualToggle = $("manualToggle");
   manualToggle.addEventListener("click", toggleManualMenu);
   manualToggle.addEventListener("keydown", (e)=>{
     if (e.key === "Enter" || e.key === " ") {
@@ -792,17 +829,14 @@ async function trackEvent(action){
 
   setupManualButtons();
   validate();
-
-  // Load counter once on page load
   refreshCounter();
 
   // Hide Gmail toggle on mobile
   if (isMobileDevice()){
-    document.getElementById("gmailCheck").checked = false;
-    const g = document.getElementById("gmailToggle");
+    $("gmailCheck").checked = false;
+    const g = $("gmailToggle");
     if (g) g.style.display = "none";
   }
-  
 })();
 </script>
 </body>
